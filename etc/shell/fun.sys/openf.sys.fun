@@ -30,7 +30,7 @@ function openf() {
     echo ''
     echo 'Description:'
     echo ' -r <root>    Specify where is the root of the search.'
-    echo '              (Optional, defaults to ".")'
+    echo '              (Optional, defaults to ".", multiple allowed)'
     echo ' -x <dir>     Specify a directory to exclude from the search.'
     echo '              (Optional, multiple allowed, can be a pattern, always case sensitive)'
     echo ' -l           Only list the files without opening them.'
@@ -49,7 +49,7 @@ function openf() {
     echo '              (Required, multiple allowed)'
   }
 
-  local root='.'
+  local roots=''
   local dir_forbidden='-name .svn -o -name .cvs -o -name .subversion -o -name .git'
   local only_list=0
   local case_sensitive=''
@@ -62,7 +62,7 @@ function openf() {
 
   while [ "$#" -ne 0 ]; do
     if [ "$1" = '-r' ]; then
-      root=$2
+      roots="$roots $2"
       shift 2
     elif [ "$1" = '-d' ]; then
       if ! [ -z "$dir_fobidden" ]; then
@@ -118,6 +118,10 @@ function openf() {
     fi
   fi
 
+  if [ -z "$roots" ]; then
+    roots='.'
+  fi
+
   if [ -z "$patterns" ]; then
     echo 'ERROR: pattern required'
     openf_display_usage
@@ -126,7 +130,7 @@ function openf() {
 
   patterns=$(echo -n $patterns | sed -e "s/ -name / -${case_sensitive}name /g")
 
-  cmd="find $root \( \( $dir_forbidden \) -a -type d -prune -o $patterns \) -a $xpatterns -print"
+  cmd="find $roots \( \( $dir_forbidden \) -a -type d -prune -o $patterns \) -a $xpatterns -print"
   files=$(eval "$cmd")
 
   if ! [ -z "$files" ]; then
