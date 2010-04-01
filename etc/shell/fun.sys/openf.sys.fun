@@ -51,7 +51,7 @@ function openf() {
 
   local roots=''
   local dir_forbidden='-name .svn -o -name .cvs -o -name .subversion -o -name .git'
-  local only_list=0
+  local only_list='0'
   local case_sensitive=''
   local editor=''
   local xpatterns=''
@@ -71,7 +71,7 @@ function openf() {
       dir_forbidden="$dir_forbidden -name '$2'"
       shift 2
     elif [ "$1" = '-l' ]; then
-      only_list=1
+      only_list=''
       shift
     elif [ "$1" = '-i' ]; then
       case_sensitive=''
@@ -89,10 +89,7 @@ function openf() {
       patterns="$patterns -name '$2'"
       shift 2
     elif [ "$1" = '-ne' ]; then
-      if ! [ -z "$xpatterns" ]; then
-        xpatterns="$xpatterns -a"
-      fi
-      xpatterns="$xpatterns ! -name '$2'"
+      xpatterns="$xpatterns ! -name '$2' -a"
       shift 2
     else
       if ! [ -z "$patterns" ]; then
@@ -103,7 +100,7 @@ function openf() {
     fi
   done
 
-  if [ "$only_list" = "0" ]; then
+  if [ "$only_list" = '0' ]; then
     if [ -z "$editor" ]; then
       if [ -z "$VISUAL" ]; then
         if [ -z "$EDITOR" ]; then
@@ -130,14 +127,14 @@ function openf() {
 
   patterns=$(echo -n $patterns | sed -e "s/ -name / -${case_sensitive}name /g")
 
-  cmd="find $roots \( \( $dir_forbidden \) -a -type d -prune -o $patterns \) -a $xpatterns -print"
+  cmd="find $roots \( \( $dir_forbidden \) -a -type d -prune -o $patterns \) -a $xpatterns -type f -print$only_list"
   files=$(eval "$cmd")
 
   if ! [ -z "$files" ]; then
-    if [ "$only_list" != "0" ]; then
+    if [ -z "$only_list" ]; then
       echo "$files"
     else
-      echo "$files" | xargs $editor
+      echo -n "$files" | xargs --null $editor
     fi
   fi
 }
