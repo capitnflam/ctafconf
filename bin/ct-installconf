@@ -214,6 +214,32 @@ env_mom()
   done;
 }
 
+#fun merge'o'matic
+fun_mom()
+{
+  dirsys=~/.config/ctafconf/etc/shell/fun.sys
+  dirusr=~/.config/ctafconf/perso/fun
+  local tmp;
+  if ! [ -d "$dirusr" ]; then
+    mkdir "$dirusr" >/dev/null 2>/dev/null
+  fi
+  ls "$dirsys/" | grep ".sys.fun$" | while read fn; do
+    if [ -f "$dirusr/$fn" ]; then
+      tmp="$dirusr/$fn.tmp";
+      mv "$dirusr/$fn" "$tmp"
+      ~/.config/ctafconf/bin/mom.pl "$dirsys/$fn" "$tmp" > "$dirusr/$fn"
+      rm "$tmp"
+    elif [ -f "$dirusr/$fn.disable" ]; then
+      tmp="$dirusr/$fn.disable.tmp";
+      mv "$dirusr/$fn.disable" "$tmp"
+      ~/.config/ctafconf/bin/mom.pl "$dirsys/$fn" "$tmp" > "$dirusr/$fn.disable"
+      rm "$tmp"
+    else
+      cp "$dirsys/$fn" "$dirusr/$fn"
+    fi
+  done;
+}
+
 #############################################################################
 ##START
 #############################################################################
@@ -263,6 +289,7 @@ fi
 
 if [ x$mode = xupdate ] ; then
   env_mom
+  fun_mom
   grk_install_all
   currentcid=$(cd ~/.config/ctafconf ; git rev-list 'HEAD^1..HEAD' 2>/dev/null)
   echo "$currentcid" > ~/.config/ctafconf/perso/installed
@@ -299,6 +326,7 @@ check_app "most" "most replace less, better pager, it allow man page coloration"
 check_app "dialog" "dialog allow script to use a window system in console, it could be used in all ctafconf program"
 
 env_mom
+fun_mom
 
 grk_install_all
 
