@@ -26,12 +26,12 @@
 
 function openf() {
   function openf_display_usage() {
-    echo 'usage: openf [-r <root>] [-d <dir>] [-l] [+i] [-i] [-ed <editor>] [-e] <pattern>'
+    echo 'usage: openf [-r <root>] [-x <dir>] [-l] [+i] [-i] [-ed <editor>] [-e] <pattern>'
     echo ''
     echo 'Description:'
     echo ' -r <root>    Specify where is the root of the search.'
     echo '              (Optional, defaults to ".")'
-    echo ' -d <dir>     Specify a directory to ignore during the search.'
+    echo ' -x <dir>     Specify a directory to exclude from the search.'
     echo '              (Optional, multiple allowed, can be a pattern, always case sensitive)'
     echo ' -l           Only list the files without opening them.'
     echo '              (Optional)'
@@ -43,6 +43,8 @@ function openf() {
     echo '              (Optional, default to $VISUAL or $EDITOR)'
     echo ' -e           Specify that the next argument is a search pattern.'
     echo '              (Optional, multiple allowed)'
+    echo ' -ne          Specify that the next argument is a search pattern to exclude matching names.'
+    echo '              (Optional, multiple allowed)'
     echo ' <pattern>    Specify a search pattern.'
     echo '              (Required, multiple allowed)'
   }
@@ -52,6 +54,7 @@ function openf() {
   local only_list=0
   local case_sensitive=''
   local editor=''
+  local xpatterns=''
   local patterns=''
 
   local cmd=''
@@ -85,6 +88,12 @@ function openf() {
       fi
       patterns="$patterns -name '$2'"
       shift 2
+    elif [ "$1" = '-ne' ]; then
+      if ! [ -z "$xpatterns" ]; then
+        xpatterns="$xpatterns -a"
+      fi
+      xpatterns="$xpatterns ! -name '$2'"
+      shift 2
     else
       if ! [ -z "$patterns" ]; then
         patterns="$patterns -o"
@@ -115,9 +124,9 @@ function openf() {
     return 2
   fi
 
-  patterns=$(echo -n $patterns | sed -e "s/-name/-${case_sensitive}name/g")
+  patterns=$(echo -n $patterns | sed -e "s/ -name / -${case_sensitive}name /g")
 
-  cmd="find $root \( $dir_forbidden \) -a -type d -prune -o $patterns -print"
+  cmd="find $root \( \( $dir_forbidden \) -a -type d -prune -o $patterns \) -a $xpatterns -print"
   files=$(eval "$cmd")
 
   if ! [ -z "$files" ]; then
