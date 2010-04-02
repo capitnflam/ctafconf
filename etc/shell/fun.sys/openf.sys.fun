@@ -138,3 +138,4 @@ function openf() {
     fi
   fi
 }
+alias my_openf=openf

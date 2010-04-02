@@ -49,7 +49,7 @@ function findin
 		substr() { eval print -R -n "\"\$$1[$(($2+1)),$(($2+$3))]\""; }
 	fi
 
-	function dispath_lang()
+	function dispatch_lang()
 	{
 	    local fun=${1}$(substr LANG 3 2)
 	    if [ -z $(substr LANG 3 2) ] ||
@@ -66,6 +66,10 @@ function findin
 	    {
 		echo "Sorry but this script works only for bash and zsh."
  		echo "But you can upgrade it for your shell and send it to me :)"
+	    }
+	    function shell_msg_US()
+	    {
+              shell_msg_EN $@
 	    }
 	    function shell_msg_FR()
 	    {
@@ -136,6 +140,10 @@ function findin
 		echo '-x    : Exclude from the search all the directories that the name matches'
 		echo '        the given pattern.'
 	}
+	function findin_display_usage_US()
+	{
+                findin_display_usage_EN $@
+        }
 
 	function findin_display_usage()	{ dispatch_lang findin_display_usage_ ; }
 
@@ -203,7 +211,19 @@ function findin
 	done
 
 	if [ -z "$pattern" ]; then
-		echo 'Nécessite un pattern !'
+                function pattern_missing_EN()
+                {
+                        echo 'A pattern is mandatory!'
+                }
+                function pattern_missing_US()
+                {
+                        pattern_missing_EN $@
+                }
+                function pattern_missing_FR()
+                {
+                        echo 'Nécessite un pattern !'
+                }
+                dispatch_lang pattern_missing_
 		findin_display_usage
 		return 1
 	fi
@@ -323,7 +343,7 @@ function findin
 		# echo "$files" | while read -r file; do
 		while read -r -t5 file; do read_keeps_trying=0
 				# Au cas ou stdin est vide on a quand meme une ligne
-			[[ "$file" ]] || continue
+			[[ -z "$file" ]] || continue
 			process_file "$file"
 		done < "$fifo"
 		done # fermeture du hack
