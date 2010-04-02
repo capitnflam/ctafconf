@@ -21,44 +21,44 @@
 #  3. This notice may not be removed or altered from any source distribution.
 #
 #  Micka�l Labau mlabau-shlib_AT_megami.fr
+#  Translated by capitN.flam
 #
 
 function findin
 {
   function findin_display_usage
   {
-    echo "Permet de rechercher récursivement toutes les occurences d'un motif dans les fichiers d'une arborescence."
+    echo 'Search recursively all occurrences of a pattern in files.'
     echo ''
-    echo 'Usage : findin [option] <motif>'
+    echo 'Usage : findin [option] <pattern>'
     echo ''
     echo 'Description:'
     echo ''
-    echo '-b    : Autorise la recherche dans les fichiers binaires.'
-    echo '-e    : Permet de spécifier que le prochaine argument est le motif.'
-    echo '        Cela permet de rechercher "-b" par exemple.'
-    echo '        Cette option est implicite devant un argument non reconnu.'
-    echo '-f    : Spécifie le répertoire dans lequel chercher (défini par défaut à ".").'
-    echo '-i    : Rend la recherche sensible à la casse.'
-    echo '-l    : Liste simplement les fichiers contenant au moins une occurence.'
-    echo '-o    : Lorsque la recherche est terminée, ouvre les fichiers dans lesquels'
-    echo '        une ou des occurences ont été trouvé, dans votre editeur favori.'
-    echo '-r    : Motif de remplacement (de type sed) pour les occurences trouvées.'
-    echo "-t    : Limite la recherche au fichier dont l'extension est celle spécifiée."
-    echo '        Cette extension est cumulable avec les options -t et -nt.'
-    echo "-nt   : Ignore, lors de la recherche, les fichiers dont l'extension est celle"
-    echo '        spécifiée. Cette extension est cumulable avec les options -t et -nt.'
-    echo '-w    : Le motif de recherche doit matcher un mot complet.'
-    echo '        Par exemple :'
-    echo '         Le motif "debug" ne matchera une ligne contenant "__debug__".'
-    echo '-x    : Exclure de la recherche tous les dossiers dont les noms sont celui'
-    echo '        specifié.'
+    echo '-b    : Allows search in binary files.'
+    echo '-e    : Allows to specify thaht the next argument is the pattern.'
+    echo '        Allows to search for "-b" for example.'
+    echo '        This option is implicit in front of an unknown argument.'
+    echo '-f    : Specify the directory in which you want to search (default to ".")'
+    echo '-i    : Render the search case sensitive.'
+    echo '-l    : Only list files with one or more occurrences.'
+    echo '-o    : When the search is done, open the files in which at least one occurence'
+    echo '        was found using your favorite editor (uses $EDITOR to know)'
+    echo '-r    : Replacement pattern (sed type) for found occurrences.'
+    echo '-t    : Limits the search to files with the given extension.'
+    echo '        Combining this option with -t and -nt is possible.'
+    echo '-nt   : Ignore files with the given extension.'
+    echo '        Combining this option with -t and -nt is possible.'
+    echo '-w    : The pattern must match a complete word.'
+    echo '        For example :'
+    echo '         The pattern "debug" will not match a line containing "__debug__"'
+    echo '-x    : Exclude from the search all the directories that the name matches the given pattern'
   }
 
   if [ -z "$SHELL_NAME" ]; then
     SHELL_NAME=$(ps | grep "$$")
-		# on Ubunu 9.10 "ps" command adds a space before the result so :
-		# $(ps | grep "$$" | tr -s ' ' | cut -f4 -d' ')
-		# cannot work.
+    # on Ubunu 9.10 "ps" command adds a space before the result so :
+    # $(ps | grep "$$" | tr -s ' ' | cut -f4 -d' ')
+    # cannot work.
     if echo "$SHELL_NAME" | grep -q bash; then
       SHELL_NAME=bash
     elif echo "$SHELL_NAME" | grep -q zsh; then
@@ -68,9 +68,9 @@ function findin
 
   if  ! [ $SHELL_NAME = bash ] &&
     ! [ $SHELL_NAME = zsh ]; then
-    echo "Désolé ce script ne fonctionne que sous bash ou zsh."
-    echo "Mais vous pouvez le mettre à jour pour votre shell et me le renvoyer :)"
-    return
+    echo 'Sorry, this script only works with bash and zsh.'
+    echo 'But you can update it for your shell and send it to me :)'
+    return 42
   fi
 
   if [ $SHELL_NAME = bash ]; then
@@ -145,7 +145,7 @@ function findin
   done
 
   if [ -z "$pattern" ]; then
-    echo 'Nécessite un pattern !'
+    echo 'At least one pattern is mandatory!'
     findin_display_usage
     return 1
   fi
@@ -195,8 +195,8 @@ function findin
     fi
 
     if [ "$?" -eq 0 ]; then
-			# Les fichiers binaires affichent "concorde" ou "concordant" donc ils sont normalement affiches.
-			# On evite ceci car ces fichiers ne nous interessent pas.
+      # Les fichiers binaires affichent "concorde" ou "concordant" donc ils sont normalement affiches.
+      # On evite ceci car ces fichiers ne nous interessent pas.
       if [ $allow_binary_files = 1 ] || ! echo "$out" | grep -i -q 'concord'; then
 	results="$results'$1' "
 	if [ $only_list = 1 ]; then
@@ -215,8 +215,8 @@ function findin
   }
 
   if [ $open_results = 0 ]; then
-		# Cette boucle permet de gérer les noms de fichier avec des espaces
-		# mais est executée dans un subshell => donc pas d'effet de bord possible sur les variables
+    # Cette boucle permet de g�rer les noms de fichier avec des espaces
+    # mais est execut�e dans un subshell => donc pas d'effet de bord possible sur les variables
     echo "$files" | while read -r i; do
       process_file "$file"
     done
@@ -246,23 +246,23 @@ function findin
     local fifo=$(tempfifo -p "$(basename -- $0)")
     echo -n "$files" > "$fifo"
 
-		# HACK :
-		# Le read de la boucle suivante (pas celle ci dessous, la suivante)
-		# peut provoquer un "Interrupted function call" a cause du fifo et
-		# Lorsque c'est le cas, la boucle peut etre completement skippée !
-		# Aucun fichier n'est traité, donc soit tout passe, soit rien ne passe.
-		# "-t5" semble ameliorer les choses mais pas completement
-		# on utilise la boucle ci-dessous pour etre sur que read a fonctionné.
+    # HACK :
+    # Le read de la boucle suivante (pas celle ci dessous, la suivante)
+    # peut provoquer un "Interrupted function call" a cause du fifo et
+    # Lorsque c'est le cas, la boucle peut etre completement skipp�e !
+    # Aucun fichier n'est traité, donc soit tout passe, soit rien ne passe.
+    # "-t5" semble ameliorer les choses mais pas completement
+    # on utilise la boucle ci-dessous pour etre sur que read a fonctionn�.
     local read_keeps_trying=1
     while (( $read_keeps_trying )); do
 
-		# l'utilisation de read permet de gerer les noms de fichier
-		# avec des espaces sans changer l'IFS.
-		# L'utilisation du fifo permet au code du while d'avoir des effet de bords
-		# Dans le cas présent, modifier les variables results.
-		# Code de boucle precedant qui ne necessite pas de hack mais ne permet pas
-		# les effets de bord :
-		# echo "$files" | while read -r file; do
+      # l'utilisation de read permet de gerer les noms de fichier
+      # avec des espaces sans changer l'IFS.
+      # L'utilisation du fifo permet au code du while d'avoir des effet de bords
+      # Dans le cas pr�sent, modifier les variables results.
+      # Code de boucle precedant qui ne necessite pas de hack mais ne permet pas
+      # les effets de bord :
+      # echo "$files" | while read -r file; do
       while read -r -t5 file; do read_keeps_trying=0
 				# Au cas ou stdin est vide on a quand meme une ligne
 	[[ "$file" ]] || continue
@@ -270,7 +270,7 @@ function findin
       done < "$fifo"
     done # fermeture du hack
 
-		# Il ne restent plus qu'a lire results
+    # Il ne restent plus qu'a lire results
     $EDITOR $results
   fi
 }
