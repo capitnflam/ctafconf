@@ -1,6 +1,6 @@
 #!/bin/sh
 ##
-## openf.sys.env.sh
+## openf.sys.fun
 ## Login : <capitnflam@Milhouse>
 ## Started on  Thu Apr  1 01:21:25 2010 capitN.flam
 ## $Id$
