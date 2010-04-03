@@ -52,7 +52,7 @@ function findin
 	function dispatch_lang()
 	{
 	    local fun=${1}$(substr LANG 3 2)
-	    if [ -z $(substr LANG 3 2) ] ||
+	    if [ -z "$(substr LANG 3 2)" ] ||
 		! type "$fun" > /dev/null 2>&1; then
                 fun=${1}EN
 	    fi
@@ -91,7 +91,6 @@ function findin
 		echo ''
 		echo 'Description:'
 		echo ''
-		echo '-b    : Autorise la recherche dans les fichiers binaires.'
 		echo '-e    : Permet de spécifier que le prochaine argument est le motif.'
 		echo '        Cela permet de rechercher "-b" par exemple.'
 		echo '        Cette option est implicite devant un argument non reconnu.'
@@ -120,7 +119,6 @@ function findin
 		echo ''
 		echo 'Description:'
 		echo ''
-		echo '-b    : Allows search in binary files.'
 		echo '-e    : Allows to specify that the next argument is the pattern.'
 		echo '        Allows to search for "-b" for example.'
 		echo '        This option is implicit in front of an unknown argument.'
@@ -153,17 +151,13 @@ function findin
 	local forbidden="! -name '*.*~'"
 	forbidden="$forbidden -a ! -name '*.#*#'"
 	local case_sensitive='-i'
-	local allow_binary_files=0
 	local pattern_is_word=
 	local only_list=0
 	local open_results=0
 	unset replace_pattern
 	local grep_color=''
 	while [ "$#" -ne 0 ]; do
-		if [ "$1" = '-b' ]; then
-			allow_binary_files=1
-			shift
-		elif [ "$1" = '-e' ]; then
+		if [ "$1" = '-e' ]; then
 			pattern="$2"
 			shift 2
 		elif [ "$1" = '-f' ]; then
@@ -262,32 +256,20 @@ function findin
 	local len=
 	function process_file()
 	{
-		if [ "${1%.a}" != "$1" -o "${1%.so}" != "$1" ]; then
-			if [ $allow_binary_files = 1 ]; then
-				out=$(nm "$1" | GREP_COLOR="$grep_color" grep $pattern_is_word $case_sensitive -n --color=always -e "$pattern")
-			else
-				out="concord"
-			fi
-		else
-			out=$(GREP_COLOR="$grep_color" grep $pattern_is_word $case_sensitive -n --color=always  -e "$pattern" "$1")
-		fi
+		out=$(GREP_COLOR="$grep_color" grep $pattern_is_word $case_sensitive -n --color=always  --binary-files=without-match -e "$pattern" "$1")
 
 		if [ "$?" -eq 0 ]; then
-			# Les fichiers binaires affichent "concorde" ou "concordant" donc ils sont normalement affiches.
-			# On evite ceci car ces fichiers ne nous interessent pas.
-			if [ $allow_binary_files = 1 ] || ! echo "$out" | grep -i -q 'concord'; then
-				results="$results'$1' "
-				if [ $only_list = 1 ]; then
-					echo "$1";
-				else
-					len=$(($COLUMNS - ${#1} - 2))
-					echo "$color$(substr padding 0 $(($len/2))) $1 $(substr padding 0 $(($len-$len/2)))$normal"
-					echo "$out"
-				fi
-				if [ "$replace_pattern" = "${replace_pattern-no_set}" ]; then
-					echo sed -i -e "s/$sed_pattern/$replace_pattern/g$sed_i" "$1"
-					sed -i -e "s/$sed_pattern/$replace_pattern/g$sed_i" "$1"
-				fi
+			results="$results'$1' "
+			if [ $only_list = 1 ]; then
+				echo "$1";
+			else
+				len=$(($COLUMNS - ${#1} - 2))
+				echo "$color$(substr padding 0 $(($len/2))) $1 $(substr padding 0 $(($len-$len/2)))$normal"
+				echo "$out"
+			fi
+			if [ "$replace_pattern" = "${replace_pattern-no_set}" ]; then
+				echo sed -i -e "s/$sed_pattern/$replace_pattern/g$sed_i" "$1"
+				sed -i -e "s/$sed_pattern/$replace_pattern/g$sed_i" "$1"
 			fi
 		fi
 	}
@@ -299,57 +281,13 @@ function findin
 			process_file "$file"
 		done
 	else
-		if ! tempfile 1>&2 > /dev/null; then
-			function tempfile()
-			{
-				local prefix="simulated_tempfile"
-				if [ "$1" = "-p" ]; then
-					prefix="$2"
-				fi
-				local p="/tmp"
-				local file=
-				while true; do
-					file=$p/${prefix}__$RANDOM
-					[[ -e "$file" ]] || break
-				done
-				echo "$file"
-			}
-		fi
-		function tempfifo()
-		{
-			local file=$(tempfile "$@")
-			mkfifo "$file" && builtin echo -n "$file"
-		}
-
-		local fifo=$(tempfifo -p "$(basename -- $0)")
-		echo -n "$files" > "$fifo"
-
-		# HACK :
-		# Le read de la boucle suivante (pas celle ci dessous, la suivante)
-		# peut provoquer un "Interrupted function call" a cause du fifo et
-		# Lorsque c'est le cas, la boucle peut etre completement skippée !
-		# Aucun fichier n'est traité, donc soit tout passe, soit rien ne passe.
-		# "-t5" semble ameliorer les choses mais pas completement
-		# on utilise la boucle ci-dessous pour etre sur que read a fonctionné.
-		local read_keeps_trying=1
-		while (( $read_keeps_trying )); do
-
-		# l'utilisation de read permet de gerer les noms de fichier
-		# avec des espaces sans changer l'IFS.
-		# L'utilisation du fifo permet au code du while d'avoir des effet de bords
-		# Dans le cas présent, modifier les variables results.
-		# Code de boucle precedant qui ne necessite pas de hack mais ne permet pas
-		# les effets de bord :
-		# echo "$files" | while read -r file; do
-		while read -r -t5 file; do read_keeps_trying=0
-				# Au cas ou stdin est vide on a quand meme une ligne
+		echo "$files" | while read -r file; do
 			! [[ -z "$file" ]] || continue
 			process_file "$file"
-		done < "$fifo"
-		done # fermeture du hack
+		done
 
 		# Il ne restent plus qu'a lire results
-		$EDITOR $results
+		eval $EDITOR  $results
 	fi
 }
 alias my_findin=findin
