@@ -67,7 +67,7 @@ function findin
       echo "Sorry but this script works only for bash and zsh."
       echo "But you can upgrade it for your shell and send it to me :)"
     }
-    function shell_msg_EN(){ shell_msg_US "$@"; }
+    function shell_msg_EN() { shell_msg_US "$@"; }
     function shell_msg_FR()
     {
       echo "Désolé ce script ne fonctionne que sous bash ou zsh."
@@ -135,9 +135,9 @@ function findin
     echo '-x    : Exclude from the search all the directories that the name matches'
     echo '        the given pattern.'
   }
-  function findin_display_usage_EN(){ findin_display_usage_US "$@"; }
+  function findin_display_usage_EN() { findin_display_usage_US "$@"; }
 
-  function findin_display_usage(){ dispatch_lang findin_display_usage_ ; }
+  function findin_display_usage() { dispatch_lang findin_display_usage_ ; }
 
   local location='.'
   local pattern=''
@@ -199,9 +199,9 @@ function findin
   done
 
   if [ -z "$pattern" ]; then
-    function pattern_missing_US(){ echo 'A pattern is mandatory!'; }
-    function pattern_missing_EN(){ pattern_missing_US "$@"; }
-    function pattern_missing_FR(){ echo 'Nécessite un pattern !'; }
+    function pattern_missing_US() { echo 'A pattern is mandatory!'; }
+    function pattern_missing_EN() { pattern_missing_US "$@"; }
+    function pattern_missing_FR() { echo 'Nécessite un pattern !'; }
     dispatch_lang pattern_missing_
     findin_display_usage
     return 1
