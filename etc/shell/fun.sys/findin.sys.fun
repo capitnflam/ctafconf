@@ -232,7 +232,7 @@ function findin
 		sed_pattern="\b$sed_pattern\b"
 	fi
 
-	local files="find $location \( -name .svn -o -name .cvs \) -a -type d -prune -o"
+	local files="find $location \( -name .svn -o -name .cvs -o -name .subversion -o -name .git \) -a -type d -prune -o"
 	if ! [ -z "$ext_allowed" ]; then
 		files="$files \( $ext_allowed \)"
 		if ! [ -z "$forbidden" ]; then
