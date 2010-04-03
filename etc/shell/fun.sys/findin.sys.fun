@@ -296,7 +296,7 @@ function findin
 		# Cette boucle permet de gérer les noms de fichier avec des espaces
 		# mais est executée dans un subshell => donc pas d'effet de bord possible sur les variables
 		echo "$files" | while read -r i; do
-			process_file "$file"
+			process_file "$i"
 		done
 	else
 		if ! tempfile 1>&2 > /dev/null; then
