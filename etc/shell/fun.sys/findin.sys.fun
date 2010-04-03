@@ -295,8 +295,8 @@ function findin
 	if [ $open_results = 0 ]; then
 		# Cette boucle permet de gérer les noms de fichier avec des espaces
 		# mais est executée dans un subshell => donc pas d'effet de bord possible sur les variables
-		echo "$files" | while read -r i; do
-			process_file "$i"
+		echo "$files" | while read -r file; do
+			process_file "$file"
 		done
 	else
 		if ! tempfile 1>&2 > /dev/null; then
