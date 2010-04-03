@@ -53,11 +53,11 @@ function findin
 	{
 	    local fun=${1}$(substr LANG 3 2)
 	    if [ -z $(substr LANG 3 2) ] ||
-		! type $fun > /dev/null 2>&1; then
-		${1}EN
-	    else
-		$fun
+		! type "$fun" > /dev/null 2>&1; then
+                fun=${1}EN
 	    fi
+		shift
+                $fun "$@"
 	}
 
 	if  ! [ $SHELL_NAME = bash ] &&
@@ -69,7 +69,7 @@ function findin
 	    }
 	    function shell_msg_US()
 	    {
-              shell_msg_EN $@
+              shell_msg_EN "$@"
 	    }
 	    function shell_msg_FR()
 	    {
@@ -142,7 +142,7 @@ function findin
 	}
 	function findin_display_usage_US()
 	{
-                findin_display_usage_EN $@
+                findin_display_usage_EN "$@"
         }
 
 	function findin_display_usage()	{ dispatch_lang findin_display_usage_ ; }
@@ -217,7 +217,7 @@ function findin
                 }
                 function pattern_missing_US()
                 {
-                        pattern_missing_EN $@
+                        pattern_missing_EN "$@"
                 }
                 function pattern_missing_FR()
                 {
@@ -343,7 +343,7 @@ function findin
 		# echo "$files" | while read -r file; do
 		while read -r -t5 file; do read_keeps_trying=0
 				# Au cas ou stdin est vide on a quand meme une ligne
-			[[ -z "$file" ]] || continue
+			! [[ -z "$file" ]] || continue
 			process_file "$file"
 		done < "$fifo"
 		done # fermeture du hack
