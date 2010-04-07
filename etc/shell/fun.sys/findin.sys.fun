@@ -137,13 +137,14 @@ function findin
   }
   function findin_display_usage_EN() { findin_display_usage_US "$@"; }
 
-  function findin_display_usage() { dispatch_lang findin_display_usage_ ; }
+  function findin_display_usage() { dispatch_lang findin_display_usage_ "$@"; }
 
   local location='.'
   local pattern=''
   local ext_allowed=''
   local forbidden="! -name '*.*~'"
   forbidden="$forbidden -a ! -name '*.#*#'"
+  local xdir="-name .svn -o -name .cvs -o -name .subversion -o -name .git"
   local case_sensitive='-i'
   local pattern_is_word=
   local only_list=0
@@ -187,10 +188,10 @@ function findin
       pattern_is_word='-w'
       shift
     elif [ "$1" = '-x' ]; then
-      if ! [ -z "$forbidden" ]; then
-	forbidden="$forbidden -a"
+      if ! [ -z "$xdir" ]; then
+	xdir="$xdir -o"
       fi
-      forbidden="$forbidden ! -name '$2'"
+      xdir="$xdir -name '$2'"
       shift 2
     else # default is like "-e"
       pattern="$1"
@@ -211,7 +212,10 @@ function findin
     sed_pattern="\b$sed_pattern\b"
   fi
 
-  local files="find $location \( -name .svn -o -name .cvs -o -name .subversion -o -name .git \) -a -type d -prune -o"
+  if ! [ -z "$xdir" ]; then
+    xdir="\( $xdir \) -a -type d -prune -o"
+  fi
+  local files="find $location $xdir"
   if ! [ -z "$ext_allowed" ]; then
     files="$files \( $ext_allowed \)"
     if ! [ -z "$forbidden" ]; then
