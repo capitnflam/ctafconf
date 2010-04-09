@@ -5,7 +5,7 @@
 ## Login   <ctaf42@gmail.com>
 ##
 ## Started on  Fri Feb 11 01:37:23 2005 GESTES Cedric
-## Last update Mon Jan 25 13:48:08 2010 Cedric GESTES
+## Last update Fri Apr  9 19:48:26 2010 capitN.flam
 ##
 ##CTAFCONF
 
@@ -25,6 +25,7 @@ fi
 [ -f ~/.config/ctafconf/etc/shell/env ] && . ~/.config/ctafconf/etc/shell/env sh
 
 ls ~/.config/ctafconf/perso/env | null_cmd grep '.env$' && source ~/.config/ctafconf/perso/env/*.env
+ls ~/.config/ctafconf/perso/fun | null_cmd grep '.fun$' && source ~/.config/ctafconf/perso/env/*.fun
 
 # #enable notification for jobs
 # setopt monitor

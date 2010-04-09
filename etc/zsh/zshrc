@@ -5,7 +5,7 @@
 ## Login   <ctaf42@gmail.com>
 ##
 ## Started on  Fri Feb 11 01:37:23 2005 GESTES Cedric
-## Last update Thu Apr  1 19:33:20 2010 capitN.flam
+## Last update Fri Apr  9 19:48:25 2010 capitN.flam
 ##
 ##CTAFCONF
 
@@ -41,8 +41,6 @@ if [ x$ctafconf_zprompt = x ] || [ x$ctafconf_zprompt = xctaf ] ; then
 else
   prompt "$ctafconf_zprompt"
 fi
-
-ls ~/.config/ctafconf/perso/fun | null_cmd grep '.fun$' && source ~/.config/ctafconf/perso/env/*.fun
 
 if [ -f ~/.config/ctafconf/perso/zshrc.mine ]; then
   source ~/.config/ctafconf/perso/zshrc.mine
