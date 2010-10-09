@@ -1,0 +1,6 @@
+#!/bin/sh
+##
+
+# Always use ccache if it's installed
+null_which ccache && env_set CC  "ccache gcc"
+null_which ccache && env_set CXX "ccache g++"

@@ -5,13 +5,13 @@
 ## Login   <ctaf42@gmail.com>
 ##
 ## Started on  Fri Feb 11 01:37:23 2005 GESTES Cedric
-## Last update Fri Apr  9 19:48:25 2010 capitN.flam
+## Last update Sat Oct  9 05:16:49 2010 capitN.flam
 ##
 ##CTAFCONF
 
 ## Warning ##
 #never edit this file
-#please edit ~/.config/ctafconf/perso/zshrc.mine
+#please edit ~/.zshrc.user
 
 #to start a clean zsh session (without conf) : zsh -fx
 
@@ -19,6 +19,21 @@
 if [[ $- != *i* ]] || [ a$HOST = agate-ssh ]; then
     return
 fi
+
+export HISTSIZE=50000
+export HISTFILE=~/.zshhistory
+export SAVEHIST=10000
+export BLOCK_SIZE=human-readable
+# depth of the directory history
+DIRSTACKSIZE=30
+
+#show who login and who logout on the system
+#export WATCHFMT="%n has %a %l from %M"
+#export WATCH=all
+
+# Automatically remove duplicates from these arrays
+typeset -U PATH
+
 #include global environment
 [ -f ~/.config/ctafconf/etc/shell/env ] && . ~/.config/ctafconf/etc/shell/env sh
 
@@ -42,6 +57,12 @@ else
   prompt "$ctafconf_zprompt"
 fi
 
-if [ -f ~/.config/ctafconf/perso/zshrc.mine ]; then
-  source ~/.config/ctafconf/perso/zshrc.mine
+if ! test -z "$ctafconf_profiles" ; then
+  for i in $(echo $ctafconf_profiles) ; do
+    test -f ~/.config/ctafconf/profile/$i/zshrc && source ~/.config/ctafconf/profile/$i/zshrc
+  done
+fi
+
+if [ -f ~/.zshrc.user ]; then
+  source ~/.zshrc.user
 fi

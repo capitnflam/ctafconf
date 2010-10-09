@@ -1,112 +1,23 @@
-########################################
-##############  ROADMAP  ###############
-########################################
+CTAFCONF -*- mode: org; -*-
 
-v2.0:
-General:
-continue to support console tools
+Roadmap
+  The goal is to work everywhere, without intrusive default settings,
+  Profile can be created to support specific features in emacs/zsh/bash
 
-  - cleanup as much as possible (emacs, old files)
-  - install: backup the first copy of a configfile, the backup will be next to the config file
-  - automatic aldebaran mode if running on a box inside aldebaran
-  - separate user configuration to file <configfile.rc>.custom next to <configfile.rc>
-  - osx: do not always install on macosx
-  - osx: be smart with cmake, etc..
-  - osx: correct man page
-  - config option to switch from emacs to vim as default editor (and others?)
+* ct-installconf
+** TODO install
+*** TODO more intelligent file backup
+*** TODO [#B] ask if user want to switch default shell to zsh
+** TODO ct-gui
+*** TODO install
+*** TODO component installation
+*** TODO update
+*** TODO use the same lib as setup
+*** TODO change env variable
+*** TODO add/mod/suppr alias
+*** TODO handle profile
+* Emacs
+** TODO Template
+*** TODO support profile in template (use profile/emacs/template if available)
 
-setup:
-  - use python for the installation
-  - ask if user want to switch default shell to zsh
-  - do not assume ctafconf's sources are in .config/ctafconf
-  - store personal information to .config/ctafconf (install link from everywhere), remove the perso folder
-  - simplify setup
-
-GUI:
-  - install
-  - component installation
-  - update
-  - use the same lib as setup
-  - change env variable
-  - add/mod/suppr alias
-  - handle profile
-
-zsh:
-  - allow for automatic sourcing of a config file when entering a directory
-    and finding a .zenv or .env
-    this config file should set a variable that would be displayed in the prompt
-    to remember the special behaviors of the shell
-
-
-V1.1.0:
-  - support uninstall
-
-V1.0.44: goal: rock stable
-  - test on freebsd/netbsd/openbsd/cygwin/windows/osx
-
-########################################
-###############  TODO  #################
-########################################
-see the bug tracker at www.sf.net/projects/grk
-
-ct-env:
-  - GUI
-  - remove env.epita, update ct-profile to use env
-  - bug with cancel and dialog in enable/disable
-  - dont source all the application
-  - source env only for the session
-  - bug : dont work from tcsh
-
-ct-xsession:
-  - allow ctafconf_wm=cycle to cycle trough each wm
-
-DOC:
-  - ct-env : one page on the wiki (each pages: ct-env, ct-installconf, programming, console)
-
-  - add a xsession: guess for the default user-profile (X should always work), remove xsession/startx from default install
-
-  - allow to edit the blocked machine list (gate-epita, ...)
-  - gui to edit (profile, emacs config, env)
-
-
-  - limit/ulimit
-  - repertoire de template perso pour emacs
-
-  => ct-autostart need to be finished
-  => ct-profile update need to be done, to backlist xsession by default
-  => ct-profile : xsession always backlisted
-  => ct-profile : enable disable color for cvs/svn/make/gmake
-
-  => emacs: goto a symbol
-  => emacs: goto the header
-  => emacs: grep => grep the current word under cursor (in the current file or all) (igrep/igrep-find/occur)
-  => block like vim
-
-  => correct window color in speedbar and co
-  => doxyemacs : always add header on each function, and synchro from each header and source
-
-  => f11 toggle gdb/compilation/grep/etc windows on and off
-
-  (require 'tramp)
-  (setq tramp-default-method "sshx")
-  then: c-x c-f /192.168.0.1:files !!!
-
-now:
-  => zsh => git => display number of change not push if tracking branch
-  => zsh profile by folder : http://git.grml.org/?p=grml-etc-core.git;f=etc/zsh/zshrc;hb=HEAD#l1044
-  => emacs : scroll-bar
-
-===>
-/* -*- Mode: C; indent-tabs-mode: t; c-basic-offset: 2; tab-width: 2 -*- */
-(require 'grep)
-(grep "grep")
-
-awesome frame work
-==================
-a tag by project
-
-=> a project folder
-=> command for git gui,gitk
-=> command to open emacs
-=> a command to toggle a terminal in the right folder
 

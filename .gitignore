@@ -1,6 +1,7 @@
-perso
 \#*#
 *.[oa]
 *~
-
-etc/emacs/site-lisp/cedet
+.installed
+user-profile.sh
+*.pyc
+*.pyo

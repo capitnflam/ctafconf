@@ -1,14 +1,18 @@
-#!/bin/bash
+#!/usr/bin/env python
+#vim: sw=2
 ##
-## ct-install.sh
-## Login : <ctaf@localhost.localdomain>
-## Started on  Tue Apr 11 13:55:03 2006 GESTES Cedric
+## ct-install.py
+## Login : <ctaf@ctaf-maptop>
+## Started on  Sun Jan 17 12:57:42 2010 Cedric GESTES
 ## $Id$
 ##
-## Copyright (C) 2006 GESTES Cedric
+## Author(s):
+##  - Cedric GESTES <ctaf42@gmail.com>
+##
+## Copyright (C) 2010 Cedric GESTES
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
-## the Free Software Foundation; either version 2 of the License, or
+## the Free Software Foundation; either version 3 of the License, or
 ## (at your option) any later version.
 ##
 ## This program is distributed in the hope that it will be useful,
@@ -21,318 +25,322 @@
 ## Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 ##
 
-
-mode="$1"
-
-grkdir=~/.config/ctafconf/etc/grk
-
-#catch a signal, else termcaps shit
-_trap_kill ()
-{
-  echo killing
-  exit 0
-}
-trap _trap_kill INT
-
-#PKG FUNCTION
-pkg_description()
-{
-  local name="$@"
-
-  eval $name"_description"
-  return $?
-}
-
-pkg_is_installed()
-{
-  local name="$@"
-
-  eval $name"_is_installed"
-  return $?
-}
-
-pkg_install()
-{
-  local name=$@
-
-  echo installing package: $name
-  eval $name"_install"
-  return $?
-}
-
-pkg_uninstall()
-{
-  local name=$@
-
-  eval $name"_uninstall"
-  return $?
-}
-
-pkg_alwaysinstall()
-{
-  local name=$@
-
-  eval $name"_alwaysinstall"
-  return $?
-}
-
-pkg_source()
-{
-  local name=$@
-
-  . "$grkdir"/"$name".grk
-}
+import logging
+import sys
+import os
+import shutil
+#import difflib
+import filecmp
 
 
-#0 installed
-#1 already installed
-#2 failed
-grk_install()
-{
-  local name=$1
-  local inst=$2
-  local ret
+logging.basicConfig(level=logging.WARNING)
+LOGGER = logging.getLogger('')
 
-  pkg_source $name
+DRY_RUN  = False
+DEST_DIR = os.path.realpath(os.path.expanduser("~"))
+SRC_DIR  = os.path.realpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 
-  if [ x$inst = xno ] || pkg_is_installed $name; then
-    ret=1
+def get_backup_filename(fname):
+  """ return a filename.<id>
+  id is incremented as needed
+
+  WARNING this function could return an invalid filename
+  if an the input filepath is not correct
+  """
+
+  bid = 0
+  while True:
+    backup = "%s.%d" % (fname, bid)
+    bid = bid + 1
+    if not os.path.exists(backup):
+      return backup
+
+def grk_copy_file(dest, src):
+  LOGGER.debug("cp %s %s", src, dest)
+  if not DRY_RUN:
+    shutil.copyfile(dest, src)
+  else:
+    LOGGER.debug("dryrun: cp %s %s", src, dest)
+  pass
+
+def grk_rm_file(dest):
+  LOGGER.debug("rm %s", dest)
+  if not DRY_RUN:
+    os.remove(dest)
+  else:
+    LOGGER.debug("dryrun: rm %s %s", dest)
+  pass
+
+
+def grk_backup_file(fname, src = None):
+  """
+  if src is specified and fname and src are identical do nothing
+
+  if <fname>.original exists:
+    copy fname to fname.backup.(date)
   else
-    if pkg_install $name; then
-      ret=0
-    else
-      ret=2
-    fi
-  fi
-  if ! pkg_alwaysinstall $name ; then
-    ret=2
-  fi
-  return $ret
-}
+    copy fname to fname.original (if fname.original does not exist)
+  """
+  LOGGER.debug("grk_backup_file(%s, %s)" % (fname, src))
 
-#list installed pkg
-grk_installed_list()
-{
-  ls -1 "$grkdir" | grep ".grk$" | while read line; do
-    name=`echo $line | sed -e s/.grk//`
-    pkg_source $name
-    if pkg_is_installed $name >/dev/null; then
-      echo "$name"
-    fi
-  done
-}
+  original = fname + ".original"
 
-pkg_is_backlisted()
-{
-  local pkgname=$1
+  if not os.path.exists(fname):
+    LOGGER.warning("grk_backup_file: %s doest not exits", fname)
+    return
 
-  echo $ctafconf_backlist | grep $pkgname >/dev/null 2>/dev/null
-  return $?
-}
+  #first installation, create .original
+  if not os.path.exists(original):
+    LOGGER.info("copy %s to %s", fname, original)
+    grk_copy_file(fname, original)
+    return
 
-grk_not_installed_list()
-{
-  ls -1 "$grkdir" | grep ".grk$" | while read line; do
-    name=`echo $line | sed -e s/.grk//`
-    pkg_source $name
-    if ! pkg_is_backlisted $name && ! pkg_is_installed $name >/dev/null; then
-      echo "$name"
-    fi
-  done
-}
+  #backup as fname.date
+  backup = get_backup_filename(fname)
+  LOGGER.info("backup: %s to %s", fname, backup)
+  grk_copy_file(fname, backup)
+  pass
 
-grk_package_list()
-{
-  ls -1 "$grkdir" | grep ".grk$" | while read line; do
-    name=`echo $line | sed -e s/.grk//`
-    pkg_source "$name"
-    if ! pkg_is_backlisted "$name" >/dev/null; then
-      echo "$name"
-    fi
-  done
-}
-grk_install_all()
-{
-  ls -1 "$grkdir" | grep ".grk$" | while read line; do
-    name=`echo $line | sed -e s/.grk//`
-    pkg_source "$name"
-    if ! pkg_is_backlisted "$name" >/dev/null 2>/dev/null; then
-      pkg_install "$name"
-    fi
-    pkg_alwaysinstall "$name"
-  done
-}
+def grk_install_file_once(fname_dest, fname_src):
+  LOGGER.debug("grk_install_file_once(%s)", fname_dest)
+  src  = os.path.join(SRC_DIR, "etc", "users", fname_src)
+  dest = os.path.join(DEST_DIR, fname_dest)
+  LOGGER.debug("grk_install_file_once(%s, %s)", src, dest)
+  if not os.path.exists(dest):
+    LOGGER.debug("install custom file: %s", dest)
+    print "creating :", dest
+    grk_copy_file(src, dest)
+  else:
+    LOGGER.debug("file already exists: %s", dest)
 
-grk_help()
-{
-  echo "help"
-  ssft_select_single "Package description" \
-                     "Select packages you want help for" \
-                     `ls -1 $grkdir | grep ".grk$" | sed -e s/.grk//`
-  name=$SSFT_RESULT
-  pkg_source "$name"
-  ssft_display_message "$name description" "`pkg_description $name`"
-}
+def grk_remove_file(dest):
+  dest_abs = os.path.abspath(os.path.join(DEST_DIR, dest))
+  if (os.path.exists(dest_abs)):
+    LOGGER.info("the configuration file : %s exits, creating a backup", dest_abs)
+    print "removing :", dest
+    grk_backup_file(dest_abs)
+    grk_rm_file(dest_abs)
 
+def grk_install_file(dest, src):
+  """
+  - check if file exists
+  - backup dest (with grk_backup_file)
+  """
+  LOGGER.debug("grk_install_file(%s, %s)" % (str(dest), str(src)))
 
-check_app()
-{
-  local app="$1"
-  local comment="$2"
-  if ! which $app 2>/dev/null >/dev/null ; then
-    msg="ct-installconf: Can't find the command '$app' on your system !!!!
-$comment"
-    ssft_display_message "WARNING" "$msg"
-    return 1
-  fi
-  return 0
-}
+  dest_abs = os.path.abspath(os.path.join(DEST_DIR, dest))
+  #LOGGER.debug("dest abs: %s" % (dest_abs))
 
-#env merge'o'matic
-env_mom()
-{
-  dirsys=~/.config/ctafconf/etc/shell/env.sys
-  dirusr=~/.config/ctafconf/perso/env
-  local tmp;
-  if ! [ -d "$dirusr" ]; then
-    mkdir "$dirusr" >/dev/null 2>/dev/null
-  fi
-  ls "$dirsys/" | grep ".sys.env$" | while read fn; do
-    if [ -f "$dirusr/$fn" ]; then
-      tmp="$dirusr/$fn.tmp";
-      mv "$dirusr/$fn" "$tmp"
-      ~/.config/ctafconf/bin/mom.pl "$dirsys/$fn" "$tmp" > "$dirusr/$fn"
-      rm "$tmp"
-    elif [ -f "$dirusr/$fn.disable" ]; then
-      tmp="$dirusr/$fn.disable.tmp";
-      mv "$dirusr/$fn.disable" "$tmp"
-      ~/.config/ctafconf/bin/mom.pl "$dirsys/$fn" "$tmp" > "$dirusr/$fn.disable"
-      rm "$tmp"
-    else
-      cp "$dirsys/$fn" "$dirusr/$fn.disable"
-    fi
-  done;
-}
+  src_abs = os.path.abspath(os.path.join(SRC_DIR, src))
+  #LOGGER.debug("src abs: %s" % (src_abs))
 
-#fun merge'o'matic
-fun_mom()
-{
-  dirsys=~/.config/ctafconf/etc/shell/fun.sys
-  dirusr=~/.config/ctafconf/perso/fun
-  local tmp;
-  if ! [ -d "$dirusr" ]; then
-    mkdir "$dirusr" >/dev/null 2>/dev/null
-  fi
-  ls "$dirsys/" | grep ".sys.fun$" | while read fn; do
-    if [ -f "$dirusr/$fn" ]; then
-      tmp="$dirusr/$fn.tmp";
-      mv "$dirusr/$fn" "$tmp"
-      ~/.config/ctafconf/bin/mom.pl "$dirsys/$fn" "$tmp" > "$dirusr/$fn"
-      rm "$tmp"
-    elif [ -f "$dirusr/$fn.disable" ]; then
-      tmp="$dirusr/$fn.disable.tmp";
-      mv "$dirusr/$fn.disable" "$tmp"
-      ~/.config/ctafconf/bin/mom.pl "$dirsys/$fn" "$tmp" > "$dirusr/$fn.disable"
-      rm "$tmp"
-    else
-      cp "$dirsys/$fn" "$dirusr/$fn"
-    fi
-  done;
-}
+  #check if fname and src are identical
+  try:
+    if filecmp.cmp(src_abs, dest_abs):
+      LOGGER.info("identical: %s %s", src_abs, dest_abs)
+      return
+  except OSError, e:
+    if e.errno != 2:
+      raise
 
-#############################################################################
-##START
-#############################################################################
-ctconfdir=~/.config/ctafconf
-if ! [ -d "$ctconfdir" ] ; then
-  echo "Can't find ~/.config/ctafconf directory"
-  echo "Aborting, you should put the ctafconf folder of your tarball into ~/.config"
-  exit
-fi
+    #TODO
+    #f = open(src, "r")
+    #src_content = f.readlines()
+    #f.close()
+    #f = open(fname, "r")
+    #dest_content = f.readlines()
+    #f.close()
 
-#install tools
-. ~/.config/ctafconf/etc/shlib/grktools.sh
+    #d = difflib.Differ()
+    #ret = d.compare(src_content, dest_content)
+    #if ret:
+    #  print ret
+    #  return
+
+  if (os.path.exists(dest_abs)):
+    #LOGGER.info("the configuration file : %s exits, creating a backup", dest_abs)
+    grk_backup_file(dest_abs, src_abs)
+
+  print "installing: %s" % dest
+  grk_copy_file(src_abs, dest_abs)
+  pass
+
+def grk_uninstall_file(dest):
+  LOGGER.debug("grk_uninstall_file", dest)
+  pass
 
 
-#shellscript frontend
-. ~/.config/ctafconf/etc/shlib/ssft.sh
+def grk_install(grksetup):
+  """
+  - install a grksetup file
+  """
+  print grksetup.__name__
+  if getattr(grksetup, 'FILES', None):
+    for grk in grksetup.FILES:
+      grk_install_file(grk[0], grk[1])
+
+  if getattr(grksetup, 'REMOVE_FILES', None):
+    for grk in grksetup.REMOVE_FILES:
+      grk_remove_file(grk)
+
+  if getattr(grksetup, 'USERS', None):
+    for user in grksetup.USERS:
+      grk_install_file_once(user[0], user[1])
+
+  inst_fct = getattr(grksetup, 'install', None)
+  if inst_fct and callable(inst_fct):
+    grksetup().install()
 
 
-#shell tool
-. ~/.config/ctafconf/etc/shlib/shelltools.sh sh
+def write_git_sha1():
+  """ get the current git sha1
+      write it to ~/.config/ctafconf/.installed
+  """
+  try:
+    head = open(os.path.join(SRC_DIR, ".git", "HEAD")).readlines()[0].strip()
+  except:
+    LOGGER.warning("Can't open .git/HEAD")
+    return
+  rev = None
+  if head.startswith("ref:"):
+    try:
+      rev = open(os.path.join(SRC_DIR, ".git", head[5:])).readlines()[0].strip()
+    except:
+      LOGGER.warning("Can't open .git/<rev>")
+      return
+  else:
+    rev = head
+  LOGGER.debug("Head sha1 is %s", rev)
+  f = open(os.path.expanduser("~/.config/ctafconf/.installed"), "w+")
+  f.write("%s\n" % (rev))
+  f.close()
+
+def write_default_profile():
+  """
+  write a default configuration file to ~/.config/ctafconf/user-profile.sh if the file does not exists
+  """
+  src_abs  = SRC_DIR  + "/etc/users/user-profile.sh"
+  dest_abs = DEST_DIR + "/.config/ctafconf/user-profile.sh"
+  if not os.path.exists(dest_abs):
+    grk_copy_file(src_abs, dest_abs)
+    print "to complete the installation edit ~/.config/ctafconf/user-profile.sh"
+  pass
+
+class GrkSetup:
+  """
+  contains a list of file to install
+  """
+  pass
+
+class GrkSetupZsh:
+  FILES         = [ ( ".zshrc"       , "etc/zsh/zshrc") ]
+  USERS         = [ ( ".zshrc.user"  , "sh.user") ]
+  REMOVE_FILES  = [ ".zshenv", ]
+
+class GrkSetupBash:
+  FILES = [ ( ".bashrc"      , "etc/bash/bashrc") ]
+  USERS = [ ( ".bashrc.user" , "sh.user"), ]
+
+class GrkSetupNano:
+  FILES = [ (".nanorc"       , "etc/nano/nanorc") ]
+
+class GrkSetupTop:
+  FILES = [ (".toprc"        , "etc/top/toprc") ]
+
+class GrkSetupEmacs:
+  FILES = [ (".emacs"        , "etc/emacs/emacs") ]
+  USERS = [ (".emacs.pre.el" , "emacs.user.el"),
+            (".emacs.post.el", "emacs.user.el") ]
+
+class GrkSetupScreen:
+  FILES = [ (".screenrc"     , "etc/screen/screenrc") ]
+
+class GrkSetupVim:
+  FILES = [ (".vimrc"        ,    "etc/vim/vimrc"),
+            (".gvimrc"       ,   "etc/vim/gvimrc") ]
+  USERS         = [ ( ".vimrc.user"  , "vimrc.user") ]
+  def install(self):
+    """Make a symlink ~/.vim -> .config/etc/vim """
+    src  = os.path.join(SRC_DIR,  "etc/vim")
+    dest = os.path.join(DEST_DIR, ".vim")
+    # Back up ~/.vim if neccessary
+    identical = True
+    try:
+      identical = os.path.samefile(src, dest)
+    except OSError:
+      pass
+    if not identical:
+      dest_orig = dest + ".orig"
+      os.rename(dest, dest_orig)
+    os.symlink(src, dest)
+
+class GrkSetupGnomeTerminal:
+  def install(self):
+    """ install the ctafconf profile in gnome-terminal """
+    import subprocess
+    if subprocess.call("which gconftool-2 >/dev/null 2>/dev/null", shell=True):
+      print "gconftool-2 is not available"
+      return
+    subprocess.check_call("gconftool-2 --load=${HOME}/.config/ctafconf/etc/gnome/gnome-terminal-ctafconf", shell=True)
+    output = subprocess.Popen(["gconftool-2 --get /apps/gnome-terminal/global/profile_list"], shell=True, stdout=subprocess.PIPE).communicate()[0]
+    profile_list = output.strip()[1:-1].split(",")
+    if "ctafconf" not in profile_list:
+      profile_list.append("ctafconf")
+      print "installing gnome-terminal ctafconf profile"
+      #set the default profile
+      subprocess.check_call("gconftool-2 --set /apps/gnome-terminal/global/default_profile ctafconf -t string", shell=True)
+      #add ctafconf to the default profile
+      subprocess.check_call("gconftool-2 --set /apps/gnome-terminal/global/profile_list '%s' -t list --list-type=string" % ("[" + ",".join(profile_list) + "]"), shell=True)
 
 
+PACKAGES = [ GrkSetupZsh,
+             GrkSetupBash,
+             GrkSetupNano,
+             GrkSetupTop,
+             GrkSetupEmacs,
+             GrkSetupScreen,
+             GrkSetupVim,
+             GrkSetupGnomeTerminal ]
 
-#create default directory
-grk_dir ~/.config/ctafconf/perso
-grk_dir ~/.config/ctafconf/perso/semantic
-grk_dir ~/.config/ctafconf/perso/ssh
-grk_dir ~/.config/ctafconf/perso/repos
-grk_dir ~/.config/ctafconf/perso/wallpaper
-grk_dir ~/.config/ctafconf/perso/bin
-grk_dir ~/.config/ctafconf/perso/previous
-grk_dir ~/.config/ctafconf/perso/emacs-backup
+def prepare_tree():
+  """ create symlink for etc and bin if necessary,
+  this avoid forcing source to be in .config/ctafconf
+  """
 
-if ! [ -f ~/.config/ctafconf/perso/user-profile ] ; then
-  cp ~/.config/ctafconf/etc/mine/user-profile.mine ~/.config/ctafconf/perso/user-profile
-fi
+  current_folder = os.path.normpath(os.path.join(os.path.realpath(os.path.dirname(__file__)), ".."))
+  dest_folder = os.path.realpath(os.path.join(DEST_DIR, ".config", "ctafconf"))
 
-if ! [ -f ~/.config/ctafconf/perso/emacs.config ] ; then
-  cp ~/.config/ctafconf/etc/emacs/emacs.config ~/.config/ctafconf/perso/emacs.config
-fi
+  try:
+    if os.path.samefile(dest_folder, current_folder):
+      print "inplace installation"
+      return
+  except OSError:
+    pass
 
-. ~/.config/ctafconf/perso/user-profile
 
-if ! [ -f ~/.config/ctafconf/perso/wallpaper.jpg ] ; then
-  cp ~/.config/ctafconf/etc/wallpaper/ctafconf-psycho.jpg ~/.config/ctafconf/perso/wallpaper.jpg
-fi
+  def symlink_folder(name):
+    dest_sym = os.path.join(dest_folder, name)
+    if not os.path.exists(dest_folder):
+      os.makedirs(dest_folder)
+    if not os.path.exists(dest_sym):
+      print "new symlink: ~/.config/ctafconf/" + name
+      #remove broken symlink (exists return true for broken symlink)
+      if os.path.islink(dest_sym):
+        os.remove(dest_sym)
+      os.symlink(os.path.join(current_folder, name), os.path.join(dest_folder, name))
 
-if [ x$mode = xupdate ] ; then
-  env_mom
-  fun_mom
-  grk_install_all
-  currentcid=$(cd ~/.config/ctafconf ; git rev-list 'HEAD^1..HEAD' 2>/dev/null)
-  echo "$currentcid" > ~/.config/ctafconf/perso/installed
-  exit 0
-fi
+  print "install from", current_folder
+  symlink_folder("etc")
+  symlink_folder("bin")
+  symlink_folder("profile")
 
-if [ x$mode = x-h ] || [ x$mode = x--help ] ; then
-  echo "usage: ct-installconf [mode]"
-  echo "console mode could be: console, dialog, text"
-  echo "graphic mode could be: graphic, zenity, kdialog"
-  echo "if you have problem with the default mode use text"
-  exit 0
-fi
-
-if [ x$mode = x ]; then
-  export SSFT_FRONTEND="console"
-else
-  export SSFT_FRONTEND="$mode"
-fi
-
-echo "using mode: $SSFT_FRONTEND, try -h for help about mode, or if that one doesnt work"
-
-check_app "env" "env allow colormake/gmake/svn/cvs to work."
-check_app "bash" "bash is needed for colormake/gmake/svn/cvs"
-check_app "zsh" "With zsh you will get a better shell(better completion) although this is optional"
-check_app "perl" "perl is needed for colormake/gmake/svn/cvs"
-check_app "sed" "sed is needed by lot of shell script"
-check_app "awk" "awk is needed by lot of shell script"
-check_app "xargs" "xargs is needed by lot of shell script"
-check_app "diff" "diff is needed by lot of shell script"
-check_app "cut" "cut is needed by lot of shell script"
-check_app "cal" "cal is needed by lot ct-date to display reminding events"
-check_app "most" "most replace less, better pager, it allow man page coloration"
-check_app "dialog" "dialog allow script to use a window system in console, it could be used in all ctafconf program"
-
-env_mom
-fun_mom
-
-grk_install_all
-
-currentcid=$(cd ~/.config/ctafconf ; git rev-list 'HEAD^1..HEAD' 2>/dev/null)
-echo "$currentcid" > ~/.config/ctafconf/perso/installed
-
-msg="You can change some setting's using ct-profile (for example your zsh prompt, the email used in newly create files in emacs)
-If do not run gdm/kdm, you may want support for xsession/startx, you should remove xsession from the backlist with ct-profile"
-ssft_display_message "Information" "$msg"
+if __name__ == "__main__":
+  if "--dry-run" in sys.argv:
+    DRY_RUN = True
+  if "--verbose" in sys.argv or "-v" in sys.argv:
+    LOGGER.setLevel(logging.DEBUG)
+  prepare_tree()
+  for grk in PACKAGES:
+    grk_install(grk)
+  write_git_sha1()
+  write_default_profile()

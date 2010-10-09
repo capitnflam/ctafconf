@@ -5,22 +5,19 @@
 ## Login   <ctaf42@gmail.com>
 ##
 ## Started on  Fri Sep 30 22:08:35 2005 GESTES Cedric
-## Last update Fri Apr  9 19:48:14 2010 capitN.flam
+## Last update Sat Oct  9 05:16:17 2010 capitN.flam
 ##
 #!/bin/sh
 
 ## Warning ##
 #never edit this file
-#please edit ~/.config/ctafconf/perso/bashrc.mine
+#please edit ~/.bashrc.user
 
 
 if [[ $- != *i* ]] || [ a$HOST = agate-ssh ]; then
 	# Shell is non-interactive.  Be done now
 	return
 fi
-cat ~/.config/ctafconf/VERSION
-echo -n "shell: bash, "
-cat ~/.config/ctafconf/etc/shell/motd
 
 # Bash won't get SIGWINCH if another process is in the foreground.
 # Enable checkwinsize so that bash will check the terminal size when
@@ -33,13 +30,15 @@ set bell-style none
 
 [ -f ~/.config/ctafconf/etc/shell/env ] && . ~/.config/ctafconf/etc/shell/env sh
 
-ls ~/.config/ctafconf/perso/env | null_cmd grep '.env$' && source ~/.config/ctafconf/perso/env/*.env
-
-ls ~/.config/ctafconf/perso/fun | null_cmd grep '.fun$' && source ~/.config/ctafconf/perso/fun/*.fun
-
 [ -f ~/.config/ctafconf/etc/shell/alias ] && . ~/.config/ctafconf/etc/shell/alias sh
 
 [ -f ~/.config/ctafconf/etc/bash/bashprompt ] && . ~/.config/ctafconf/etc/bash/bashprompt
 
-[ -f ~/.config/ctafconf/perso/bashrc.mine ] && ~/.config/ctafconf/perso/bashrc.mine
+if ! test -z "$ctafconf_profiles" ; then
+  for i in $(echo $ctafconf_profiles) ; do
+    test -f ~/.config/ctafconf/profile/$i/bashrc && source ~/.config/ctafconf/profile/$i/bashrc
+  done
+fi
+
+[ -f ~/.bashrc.user ] && source ~/.bashrc.user
 

@@ -9,13 +9,30 @@
 ##
 ##CTAFCONF
 
-
 #recursive grep with filename and line number
 #exclude svn
-grepr ()
+grepr()
 {
-  arg=$@
-  grep --color=always -r -n -H $arg . | grep -v "/.svn/" | grep -v ".svn-base:" | grep -v "^grep:" | ~/.config/ctafconf/bin/colorgrepr.pl 2>/dev/null
+  grep --exclude-dir=test "test" "test" 2>&1 | grep unrecognized >/dev/null
+
+  #grep < 2.5.3 doest not support exclude-dir
+  if [ $? -eq 1 ] ; then
+    filterdir="--exclude-dir=\"*git*\" --exclude-dir=\"*.svn*\" "
+  else
+    filterdir=""
+  fi
+  # -s : silent error
+  # -I : do not show binarymatch
+  # -r : recursive
+  # -n : line number
+  # -H :
+  grep --color=always -s -I -r -n \
+    --exclude "\~*"               \
+    --exclude "*.o"               \
+    --exclude "*.a"               \
+    --exclude "#*#"               \
+   $filterdir  $@  .
 }
 
 grepr $@
+

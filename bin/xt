@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 ##
 ## Author(s):
 ##  - Yannick LM <yannicklm1337@gmail.com>
@@ -40,3 +40,6 @@ function xt() {
     echo "'$1' is not a valid file"
   fi
 }
+
+
+xt $*
