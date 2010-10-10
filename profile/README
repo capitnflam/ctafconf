@@ -11,3 +11,9 @@
   Nothing really interesting here at the moment
 ** emacs: update copyright in headers
 ** emacs: save script as executable
+* sah:
+  sah conf
+** emacs
+*** Default font: DejaVu Sans Mono 8pt
+*** Default indentation is space made
+*** Default indent size = 3
