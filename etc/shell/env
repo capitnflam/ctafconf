@@ -69,6 +69,10 @@ test -d /usr/local/bin && env_set PATH "$PATH":/usr/local/bin
 test -d ~/.config/ctafconf/bin && env_set PATH "$PATH":"$HOME"/.config/ctafconf/bin
 env_set PATH "$PATH":.
 
+for i in `\ls ~/.config/ctafconf/etc/shell/fun.sys`; do
+  test -f ~/.config/ctafconf/etc/shell/fun.sys/$i && source ~/.config/ctafconf/etc/shell/fun.sys/$i
+done
+
 #different plateform test
 test -f ~/.config/ctafconf/etc/shell/env.`uname` && source ~/.config/ctafconf/etc/shell/env.`uname`
 
