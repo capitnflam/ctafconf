@@ -15,6 +15,9 @@ set virtualedit=block
 set background=dark
 set autowriteall
 
+" long lines are displayed on one line as in emacs
+set nowrap
+
 " nice menu to navigate through possible completions
 set wildmenu
 " smarter behavior of 'J' (join lines)
