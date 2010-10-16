@@ -29,8 +29,15 @@
 ;;update copyright years in headers
 (add-hook 'before-save-hook 'copyright-update)
 
-;(ctafconf-ropemacs)
+(ctafconf-ropemacs)
 
 (set-face-font 'default "-*-DejaVu Sans Mono-normal-normal-normal-*-13-*-*-*-m-0-iso10646-1")
+
+(setq default-tab-width 3)
+(setq standard-indent 3)
+
+(setq-default truncate-lines t)
+
+(icomplete-mode t)
 
 (message "using sah emacs profile")
