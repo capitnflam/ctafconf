@@ -8,8 +8,8 @@ Setup:
 
 You'll need a fairly recent version of vim for everything to work.
 
-You'll need to have exuberant-ctags installed to stop having vimrc
-complaining at start up.
+You'll need to have exuberant-ctags installed
+to use :TList
 
 
 Windows setup:
@@ -20,7 +20,7 @@ Do NOT try to use bin/ct-install (at least not yet)
 Copy:
 
 ctafconf/etc/vim/vimrc to $USER\_vimrc
-ctafconf/etc/vim        to $USER\vimfiles
+ctafconf/etc/vim       to $USER\vimfiles
 
 
 Random notes:
@@ -30,21 +30,23 @@ Random notes:
 I'll try to keep the correct file system hierarchy for vim scripts,
 so the vimrc itself is  quite small
 
-The various plugins are versionned as they were when I downloaded them,
-and some of them are patched, so do not expect to have the latest
-version of every plugins.
-
+I'm using pathogen, so the downloaded plugins are nicely put
+in separated directories in etc/vim/bundle.
+I update them from time to time ...
 
 If you wish to change settings for a particular language, please use
 vim/ftplugin/<language>.vim, NOT vimrc.
 
-Non-standard behavior:
- - virtualedit in "block" mode
-
 There is support for profiles, too.
 You can put your favorite stuff to
-.config/ctafconf/profile/<name>/vimrc
+.config/ctafconf/profile/<name>/vim/<name>/vimrc
+This directory too is loaded with pathogen, so you can put your own
+plugins here if you want.
+For instance, you can add your own snippets to
+ctafconf/profile/<name>/vim/mysnippets/ftplugin/after/<language>_mysnippets.vim
 
+Non-standard behavior (abbreviations, new shortcuts, ...) should go in your
+profile
 
 
 PLUGINS :
@@ -62,9 +64,6 @@ Code:
     ,c<ESC>i to inverse the comment of a line
     ,cs      "sexy" comment of the selection
   - snippetsEmu: an emulation of TexMate snippates.
-    They are stored in
-    after/ftplugin/<language>_mysnippets.vim
-    Open the files to see how to defoine your own snippets.
     Templates are also completed with <TAB>
 
 * C/C++:
@@ -72,14 +71,19 @@ Code:
     :A to go from .h to .c, and vice-versa,
     :AV to vsplist,
     :AS to split)
-  - taglist:
+  - taglist: (needs exuberant-ctags)
     :TlistAddFilesRecursive .
     :Tlist
 
 * Python:
   - pydoc:
     :Pydoc <keywork>
-    \pw on a word
+    <leader>pw on a word
+  - make: if pyflakes is found, run it in quick-fix mode
+
+* CMake:
+  - cmake_doc: you can use 'K' on a word in your cmake file
+  to print the cmake documentation of the function
 
 Misc:
 ----
@@ -97,7 +101,7 @@ Useless:
   - matrix:
     :Matrix
   - vimbuddy:
-    For the nice smiley in the status line
+    For the nice smiley in the status line used by yannick's statusline
 
 
 TODO:
@@ -108,7 +112,6 @@ general
 
 * Use rope for python completion like emacs
 * Auto-detect indent settings like emacs
+* In an autocommand like BufWritePre: chmod \+x the file
+  if it starts with a shebang.
 
-yannick's vimrc:
----------------
-* Cleanup the skeletons

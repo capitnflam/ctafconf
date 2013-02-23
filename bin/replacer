@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 ##
 ## Author(s):
 ##  - Dimitri MEREJKOWSKY <yannicklm1337@gmail.com>
@@ -74,6 +74,18 @@ Files matching %s are discarded.
 
 LOGGER = logging.getLogger("replacer")
 
+def is_binary(filename):
+    """ Returns True if the file is binary
+
+    """
+    with open(filename, 'rb') as fp:
+        data = fp.read(1024)
+        if not data:
+            return False
+        if b'\0' in data:
+            return True
+        return False
+
 def recurse_file(opts, directory, action):
     """
     Recusively go do the subdirectories of the directory,
@@ -93,10 +105,20 @@ def recurse_file(opts, directory, action):
                     break
         if filter_out:
             continue
+        if opts.get("file_filter"):
+            filter_out = True
+            for fo in opts.get("file_filter"):
+                if fnmatch.fnmatch(f, fo):
+                    filter_out = False
+                    break
         f = os.path.join(directory, f)
         if os.path.isdir(f):
             recurse_file(opts, f, action)
         if os.path.isfile(f):
+            if filter_out:
+                continue
+            if is_binary(f):
+                continue
             action(f)
 
 class Context:
@@ -133,7 +155,7 @@ class PyContext(Context):
             return
         if not self.match:
             return
-        print "%sIn: %s%s" % (COLORS_REPLACE["pyctx"], self.match.strip(), COLORS["clear"])
+        print("%sIn: %s%s" % (COLORS_REPLACE["pyctx"], self.match.strip(), COLORS["clear"]))
         self.displayed = True
 
 def find_in_file(opts, in_file, regexp):
@@ -154,8 +176,8 @@ def find_in_file(opts, in_file, regexp):
         if re.search(regexp, out_line):
             if display_header:
                 if not opts.get("quiet"):
-                    print
-                    print COLORS["bold"] + COLORS["light-blue"] + "file: " + os.path.relpath(in_file) + COLORS["clear"]
+                    print()
+                    print(COLORS["bold"] + COLORS["light-blue"] + "file: " + os.path.relpath(in_file) + COLORS["clear"])
                 display_header = False
 
             pyctx.display()
@@ -164,16 +186,20 @@ def find_in_file(opts, in_file, regexp):
             out_line_color  = out_line[0:match.start()] + COLORS_REPLACE["word1"]
             out_line_color  = out_line_color + out_line[match.start():match.end()]
             out_line_color  = out_line_color + COLORS_REPLACE["line2"] + out_line[match.end():]
-            print "%s%s: %s%s%s" % (COLORS_REPLACE["line2start"], ln, COLORS_REPLACE["line2"], out_line_color, COLORS["clear"])
+            print("%s%s: %s%s%s" % (COLORS_REPLACE["line2start"], ln, COLORS_REPLACE["line2"], out_line_color, COLORS["clear"]))
 
 def replace_in_file(opts, in_file, regexp, repl):
     """
     Perfoms re.sub(regexp, repl, line) for each line in
     in_file
     """
-    in_fd = open(in_file, "r")
-    in_lines = in_fd.readlines()
-    in_fd.close()
+    in_lines = []
+    try:
+        with open(in_file, "r") as in_fd:
+            in_lines = in_fd.readlines()
+    except:
+        print("Cant open file: ", in_file)
+        return
 
     out_lines = in_lines[:]
     out_lines = [re.sub(regexp, repl, l) for l in in_lines]
@@ -189,7 +215,7 @@ def replace_in_file(opts, in_file, regexp, repl):
         return
 
     if not opts.get("quiet"):
-        print COLORS["bold"] + COLORS["light-blue"] + "patching: " + os.path.relpath(in_file) + COLORS["clear"]
+        print(COLORS["bold"] + COLORS["light-blue"] + "patching: " + os.path.relpath(in_file) + COLORS["clear"])
     if opts.get("go"):
         if opts.get("backup"):
             rand_int = random.randint(100,999)
@@ -214,15 +240,15 @@ def replace_in_file(opts, in_file, regexp, repl):
             in_line_color  = in_line_color + COLORS_REPLACE["line1"] + in_line[match.end():]
             out_line_color = re.sub(regexp, COLORS_REPLACE["word2"] + repl + COLORS_REPLACE["line2"], in_line)
 
-            print "%s--%s %s%s" % (COLORS_REPLACE["line1start"], COLORS_REPLACE["line1"], in_line_color, COLORS["clear"])
-            print "%s++%s %s%s" % (COLORS_REPLACE["line2start"], COLORS_REPLACE["line2"], out_line_color, COLORS["clear"])
-            print
+            print("%s--%s %s%s" % (COLORS_REPLACE["line1start"], COLORS_REPLACE["line1"], in_line_color, COLORS["clear"]))
+            print("%s++%s %s%s" % (COLORS_REPLACE["line2start"], COLORS_REPLACE["line2"], out_line_color, COLORS["clear"]))
+            print()
 
 def find_main(opts, args):
     """ find main """
     if len(args) < 1:
-        print "Wrong number of arguments"
-        print __usage__
+        print("Wrong number of arguments")
+        print(__usage__)
         sys.exit(2)
 
     pattern = args[0]
@@ -243,8 +269,8 @@ def find_main(opts, args):
 def repl_main(opts, args):
     """ replacer main """
     if len(args) < 2:
-        print "Wrong number of arguments"
-        print __usage__
+        print("Wrong number of arguments")
+        print(__usage__)
         sys.exit(2)
 
     pattern = args[0]
@@ -261,6 +287,14 @@ def repl_main(opts, args):
     else:
         recurse_file(opts, os.getcwd(), repl_action)
 
+    if not opts.get("go") and not opts.get("quiet"):
+        print
+        print("To apply change, run again:")
+        print("$ %s %s --go\n" % (os.path.basename(sys.argv[0]), ' '.join(sys.argv[1:])))
+        print("To backup altered files, add '--backup' to the above command line.")
+        print
+
+
 def main():
     """
     manages options when called from command line
@@ -270,6 +304,8 @@ def main():
     option_parser.add_option("--no-skip-hidden",
         action = "store_false", dest = "no_hidden",
         help = "Do not skip hidden files. Use this if you know what you are doing...")
+    option_parser.add_option("--file-filter", dest = "file_filter", action = "append",
+                             help = "File filter to apply (multiple filters can be specified)")
     option_parser.add_option("--no-filter", action = "store_true", dest = "no_filter",
                              help = "Do not skip files that match the filter")
     option_parser.add_option("-d", "--debug",
@@ -278,9 +314,6 @@ def main():
     option_parser.add_option("--backup",
         action = "store_true", dest = "backup",
         help = "Create a backup for each file. This is the default")
-    option_parser.add_option("--no-backup",
-        action = "store_false", dest = "backup",
-        help = "Do not create backups")
     option_parser.add_option("--go",
         action = "store_true", dest = "go",
         help = "Perform changes rather than just printing then")
@@ -306,7 +339,7 @@ def main():
     option_parser.set_defaults(
         no_hidden = True,
         no_filter = False,
-        backup    = True,
+        backup    = False,
         go        = False,
         color     = True,
         debug     = False,
@@ -317,7 +350,7 @@ def main():
 
     opts = vars(opts_obj)
 
-    if not opts.get("color"):
+    if not opts.get("color") or not sys.stdout.isatty():
         for k in COLORS.iterkeys():
             COLORS[k] = ""
         for k in COLORS_REPLACE.iterkeys():
@@ -332,7 +365,6 @@ def main():
         repl_main(opts, args)
 
 
+
 if __name__ == "__main__":
     main()
-
-

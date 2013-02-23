@@ -43,6 +43,7 @@ alias_set make_real '`which make`'
 alias_set gmake '~/.config/ctafconf/bin/colorwarper gmake'
 alias_set gmake_real '`which gmake`'
 alias_set ka 'killall'
+alias_set doxygen '~/.config/ctafconf/bin/colorwarper doxygen'
 #alias_set make 'gmake'
 
 # Quick chmod
@@ -87,8 +88,8 @@ alias_set ne 'emacs -nw'
 alias_set gnus 'emacs -nw -f gnus'
 
 #vim
-alias_set vi  'vim'
-alias_set svi 'sudo vim'
+null_which vim && alias_set vi  'vim'
+null_which vim && alias_set svi 'sudo vim'
 
 # Screen is nice but options can be a bit hard to remember:
 alias_set sw 'screen -wipe'
@@ -121,7 +122,6 @@ alias_set less 'less -r -X -M'
 
 alias_set getx 'export DISPLAY=:0.0'
 
-alias_set j 'jobs'
 alias_set h 'history'
 
 #never alias ls
@@ -169,4 +169,4 @@ test -f ~/.config/ctafconf/etc/shell/alias.`uname` && source ~/.config/ctafconf/
 # test x$ctafconf_config != x && test -f ~/.config/ctafconf/etc/shell/alias.$ctafconf_config && source ~/.config/ctafconf/etc/shell/alias.$ctafconf_config
 
 #protect ls against failure
-ls ~/.config/ctafconf >/dev/null || alias_unset ls
+ls ~/.config/ctafconf 2>/dev/null >/dev/null || alias_unset ls

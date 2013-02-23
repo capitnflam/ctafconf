@@ -17,6 +17,7 @@ alias_set cp "cp -iv"
 # and so on:
 alias -s mp3=mplayer
 alias -s avi=mplayer
+alias -s mkv=mplayer
 alias -s pdf=evince
 alias -s html=firefox
 
@@ -24,5 +25,66 @@ alias -s html=firefox
 # (pretty standard)
 export PATH="$PATH:$HOME/bin"
 
-# Let your term surpise you!
-null_which fortune && fortune -s
+# title.zsh
+# Title bar handling
+
+# Taken from kalenz conf
+function set_title {
+    a=${(V)1//\%/\%\%}
+    a=$(print -Pn "%40>...>$a" | tr -d "\n")
+
+    case $TERM in
+    screen*)
+      print -Pn "\ek$a:$3\e\\"      # screen title (in ^A")
+      ;;
+    xterm*|rxvt)
+      print -Pn "\e]2;$2 | $a:$3\a" # plain xterm title
+      ;;
+    esac
+}
+
+function title_precmd {
+    set_title "zsh" "$USER@%m" "%55<...<%~"
+}
+
+function title_preexec {
+    set_title "$1" "$USER@%m" "%35<...<%~"
+}
+
+autoload -U add-zsh-hook
+add-zsh-hook precmd title_precmd
+add-zsh-hook preexec title_preexec
+
+# cd /path/to/file -> cd /path/to
+function smart_cd {
+  if [[ -z "$1" ]]; then
+    cd "$HOME"
+  elif [[ -f "$1" ]]; then
+    cd $(dirname "$1")
+  else
+    cd "$1"
+  fi
+}
+
+alias cd=smart_cd
+
+# vi foo/bar/bar.cpp:33 -> vim +33 foo/bar/bar.cpp
+unalias vi
+function vi() {
+  if [[ "$#" -eq 1 ]]; then
+    s="$1"
+    new_args=("${(s/:/)s}")
+    if [[ -z "$new_args[2]" ]]; then
+      /usr/bin/vim $1
+    else
+      /usr/bin/vim $new_args[1] "+$new_args[2]"
+    fi
+  else
+    /usr/bin/vim $@
+  fi
+}
+
+# autojump
+if [[ -f  /etc/profile.d/autojump.zsh ]] ; then
+  source /etc/profile.d/autojump.zsh
+fi

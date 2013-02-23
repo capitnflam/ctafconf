@@ -1,9 +1,12 @@
 ""
-" Sane defaults:
+" Vimrc for ctafconf
+"
+" Note: please keep this file clean!
+" Personal settings go to profile/<name>/vim/
+
+call pathogen#infect()
 
 set nocompatible
-syntax on
-filetype plugin on
 set history=10000
 set mouse=a
 set encoding=utf-8
@@ -34,6 +37,11 @@ set incsearch
 " Tell NerdCommenter to shut up:
 let g:NERDShutUp=1
 
+" Prevent YankRing.vim from polluting $HOME:
+if has("unix")
+  let g:yankring_history_dir = expand('$HOME') . '/.vim'
+endif
+
 " Allow completion on filenames right after a '='.
 " Uber-useful when editing bash scripts
 set isfname-==
@@ -44,15 +52,51 @@ set visualbell t_vb=
 " Disable useless ctrl+space behavior:
 imap <Nul> <Space>
 
+" Always display statusline
+set laststatus=2
+
 " Always load those useful plugins:
 runtime! macros/matchit.vim
 runtime! plugin/imaps.vim
 runtime! ftplugin/man.vim
 
+" If par is installed, just use it:
+if executable("par")
+  set formatprg=par
+end
+
+""
+" A few useful functions:
+
+" Remove trailing whitespace
+function! CleanWhiteSpace()
+  :%s/\s\+$//e
+endfunction()
+
+command! -nargs=0 CleanWhiteSpace :call CleanWhiteSpace()
+
+" Convert DOS line endings to UNIX line endings
+
+function! FromDos()
+  %s/\r//e
+endfunction
+
+command! FromDos call FromDos()
+
+
+""
+" Handling ctafconf profiles
+
 " Read ~/.config/ctafconf/user-profile.sh
 " add load ~/.config/ctafconf/profile/<name>/vimrc
 " for each name in profile
 call ctafconf#load_profiles()
+
+" Doing that causes pathogen to be called several
+" times, which somehow messes up with ftplugin,
+" so make sure it's set
+syntax on
+filetype plugin on
 
 
 " Last, load ~/.vimrc.user
@@ -61,3 +105,4 @@ if has("unix")
 else
   source ~/_vimrc.user
 endif
+
