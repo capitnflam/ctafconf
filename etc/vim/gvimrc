@@ -3,7 +3,7 @@
 
 " This color scheme is nice for GVIM,
 " but not for vim.
-colorscheme elflord
+colorscheme wombat
 
 
 if has("gui_win32")
