@@ -4,14 +4,27 @@ colorscheme elflord
 " leader key
 let mapleader=";"
 
-" show the cmd in the bottom right corner
+" Show the cmd in the bottom right corner
 set showcmd
+
+" Show the current mode
+set showmode
 
 " Mapping F8 to toggle tag list
 nnoremap <silent> <F8> :TlistToggle<CR>
 
 " Disable visual bell
 set noeb vb t_vb=
+
+" Indentation parameters
+set smartindent
+set tabstop=4
+set shiftwidth=4
+set expandtab
+
+" Adding some file types
+au BufNewFile,BufRead mk.inc set filetype=make
+au BufNewFile,BufRead mk.spec set filetype=make
 
 " Autoload cscope database
 " http://vim.wikia.com/wiki/Autoloading_Cscope_Database
@@ -40,11 +53,23 @@ nmap <leader>d :scs find d <C-R>=expand("<cword>")<CR><CR>
 vmap <leader>y "+y
 vmap <leader>d "+d
 vmap <leader>p "+p
+nmap <leader>p "+p
+
+" Reindent file
+map <F7> mzgg=G`z<CR>
 
 if has("gui_running")
 " Put gvim only configuration here
 " Disable visual bell
 set vb t_vb=
+
+" Display some invisible characters (tab, trailing spaces, eol)
+set list
+set listchars=tab:  ,trail:·,eol:¶
+
 else
 " Put vim only configuration here
 endif
+
+
+
