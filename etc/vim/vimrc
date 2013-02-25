@@ -4,6 +4,8 @@
 " Note: please keep this file clean!
 " Personal settings go to profile/<name>/vim/
 
+set nocp
+
 call pathogen#infect()
 
 set nocompatible
