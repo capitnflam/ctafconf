@@ -1,0 +1,6 @@
+alias gvimd="gvim --servername DLNA --remote "
+alias gvimt="gvim --servername TR069 --remote "
+
+export PATH="$PATH:/opt/bouml32"
+export PATH="$PATH:/opt/modelio"
+
