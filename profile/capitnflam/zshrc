@@ -1,3 +1,26 @@
+# let alt backspace delete to slashes - zsh-users list, 4 Nov 2005
+backward-delete-to-slash () {
+    local WORDCHARS=${WORDCHARS//\//}
+    zle .backward-delete-word
+}
+zle -N backward-delete-to-slash
+bindkey "\e$terminfo[kbs]" backward-delete-to-slash
+
+# CTRL + (LEFT or RIGHT)
+bindkey ';5D' emacs-backward-word
+bindkey ';5C' emacs-forward-word
+
+# Killer feature, red dots when processing command :)
+expand-or-complete-with-dots() {
+    echo -n "\e[31m ...... \e[0m"
+        zle expand-or-complete
+        zle redisplay
+}
+zle -N expand-or-complete-with-dots
+bindkey "^I" expand-or-complete-with-dots
+
+autoload -Uz compinit zsh-mime-setup
+
 alias lr='ll -R'
 alias lra='la -R'
 alias ss='~/.bin/session_search.sh '
