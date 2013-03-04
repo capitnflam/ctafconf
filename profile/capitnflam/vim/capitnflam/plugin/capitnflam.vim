@@ -53,6 +53,10 @@ nmap <leader>d :cs find d <C-R>=expand("<cword>")<CR><CR>
 vmap <leader>y "+y
 vmap <leader>d "+d
 vmap <leader>p "+p
+nmap <leader>y "+y
+nmap <leader>yy "+yy
+nmap <leader>d "+d
+nmap <leader>dd "+dd
 nmap <leader>p "+p
 
 " Reindent file
