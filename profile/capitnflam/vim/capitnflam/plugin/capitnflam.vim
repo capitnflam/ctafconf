@@ -13,6 +13,9 @@ set showmode
 " Mapping F8 to toggle tag list
 nnoremap <silent> <F8> :TlistToggle<CR>
 
+" Mapping F9 to toggle NERDTree
+nnoremap <silent> <F9> :NERDTreeToggle<CR>
+
 " Disable visual bell
 set noeb vb t_vb=
 

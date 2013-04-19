@@ -34,7 +34,7 @@ export MINICOM="-c on -w"
 
 export PATH="$PATH:${HOME}/.bin/"
 
-for p in $ctafconf_profiles; do
+for p in ${=ctafconf_profiles}; do
     zpath="${HOME}/.config/ctafconf/profile/${p}/zsh"
     if [[ -d ${zpath} ]]; then
         for m in $(\ls ${zpath}); do
