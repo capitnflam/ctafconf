@@ -85,6 +85,12 @@ endfunction
 
 command! FromDos call FromDos()
 
+""
+" Handling ctafconf user profile
+" username will be available in g:ctafconf#name
+" mail address will be available in g:ctafconf#mail
+call ctafconf#load_name()
+call ctafconf#load_mail()
 
 ""
 " Handling ctafconf profiles
