@@ -1,0 +1,20 @@
+#!/bin/bash
+
+CPATH="";
+
+function find_out {
+    local pwdpath=$(pwd -P);
+    local lpath=${pwdpath};
+
+    while [ \( ! -f "${lpath}/cscope.out" \) -a \( x${lpath} != "x/" \) -a \( -n "${lpath}" \) ]; do
+        lpath=$(dirname ${lpath});
+    done
+
+    if [ x${lpath} = "x/" ]; then
+        lpath=${pwdpath};
+    fi
+    CPATH=${lpath};
+}
+
+find_out
+cd ${CPATH} && cscope -Rb
