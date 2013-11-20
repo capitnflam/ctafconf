@@ -60,6 +60,9 @@ fi
 if ! test -z "$ctafconf_profiles" ; then
   for i in $(echo $ctafconf_profiles) ; do
     test -f ~/.config/ctafconf/profile/$i/zshrc && source ~/.config/ctafconf/profile/$i/zshrc
+    if test -d ~/.config/ctafconf/profile/$i/zsh ; then
+        fpath=(~/.config/ctafconf/profile/$i/zsh $fpath)
+    fi
   done
 fi
 
