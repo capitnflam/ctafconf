@@ -52,6 +52,13 @@ nmap <leader>f :cs find f <C-R>=expand("<cfile>")<CR><CR>
 nmap <leader>i :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
 nmap <leader>d :cs find d <C-R>=expand("<cword>")<CR><CR>
 
+"cscope quickfix
+nmap <leader>q :set cscopequickfix=s-,g-,c-,t-,e-,f-,i-,d-<CR>:copen<CR>
+nmap <leader>o :colder<CR>
+nmap <leader>n :cnewer<CR>
+nmap <leader>wo :copen<CR>
+nmap <leader>wc :cclose<CR>
+
 " Copy/cut/paste to/from OS clipboard
 vmap <leader>y "+y
 vmap <leader>d "+d
@@ -61,6 +68,13 @@ nmap <leader>yy "+yy
 nmap <leader>d "+d
 nmap <leader>dd "+dd
 nmap <leader>p "+p
+
+" Window navigation
+nmap <A-Up> <C-W>k
+nmap <A-Down> <C-W>j
+nmap <A-Left> <C-W>h
+nmap <A-Right> <C-W>l
+nmap <A-_> <C-W>_<C-W><Bar>
 
 " Reindent file
 map <F7> mzgg=G`z<CR>
