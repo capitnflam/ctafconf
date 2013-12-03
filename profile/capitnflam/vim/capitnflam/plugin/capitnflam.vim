@@ -74,6 +74,10 @@ nmap <A-Up> <C-W>k
 nmap <A-Down> <C-W>j
 nmap <A-Left> <C-W>h
 nmap <A-Right> <C-W>l
+nmap <A-k> <C-W>k<C-W>_<C-W><Bar>
+nmap <A-j> <C-W>j<C-W>_<C-W><Bar>
+nmap <A-h> <C-W>h<C-W>_<C-W><Bar>
+nmap <A-l> <C-W>l<C-W>_<C-W><Bar>
 nmap <A-_> <C-W>_<C-W><Bar>
 
 " Reindent file
