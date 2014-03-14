@@ -31,8 +31,14 @@ DIRSTACKSIZE=30
 #export WATCHFMT="%n has %a %l from %M"
 #export WATCH=all
 
+# Export ':' separated environment variables to arrays
+typeset -T LD_LIBRARY_PATH
+
 # Automatically remove duplicates from these arrays
 typeset -U PATH
+typeset -U path
+typeset -U LD_LIBRARY_PATH
+typeset -u ld_library_path
 
 #include global environment
 [ -f ~/.config/ctafconf/etc/shell/env ] && . ~/.config/ctafconf/etc/shell/env sh
