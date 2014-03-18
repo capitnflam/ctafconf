@@ -33,6 +33,7 @@ DIRSTACKSIZE=30
 
 # Automatically remove duplicates from these arrays
 typeset -U PATH
+typeset -U path
 
 #include global environment
 [ -f ~/.config/ctafconf/etc/shell/env ] && . ~/.config/ctafconf/etc/shell/env sh

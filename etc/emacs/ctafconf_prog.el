@@ -40,6 +40,7 @@
          ("\\.css$"             . css-mode)
          ("\\.cfm$"             . html-mode)
          ("\\.pl$"              . perl-mode)
+         ("\\.pml$"              . xml-mode)
          ) auto-mode-alist))
 
 ;;shebang matching
@@ -103,6 +104,10 @@
 ;;provide the go mode
 (autoload 'go-mode "go-mode" "major mode for go" t)
 (add-to-list 'auto-mode-alist '("\\.go$" . go-mode))
+
+;;provide the go mode
+(autoload 'julia-mode "julia-mode" "major mode for julia" t)
+(add-to-list 'auto-mode-alist '("\\.jl$" . julia-mode))
 
 ;;provide the lua mode
 (autoload 'lua-mode "lua-mode" "major mode for lua" t)
