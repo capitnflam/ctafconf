@@ -83,6 +83,9 @@ nmap <A-_> <C-W>_<C-W><Bar>
 " Reindent file
 map <F7> mzgg=G`z<CR>
 
+" Toggling Gundo window
+nnoremap <F5> :GundoToggle<CR>
+
 if has("gui_running")
 " Put gvim only configuration here
 " Disable visual bell

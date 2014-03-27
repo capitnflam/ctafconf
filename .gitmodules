@@ -4,3 +4,6 @@
 [submodule "profile/capitnflam/vim/editorconfig"]
 	path = profile/capitnflam/vim/editorconfig
 	url = git://github.com/editorconfig/editorconfig-vim.git
+[submodule "profile/capitnflam/vim/gundo"]
+	path = profile/capitnflam/vim/gundo
+	url = http://github.com/sjl/gundo.vim.git
