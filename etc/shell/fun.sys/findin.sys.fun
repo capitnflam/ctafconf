@@ -215,7 +215,7 @@ function findin
   if ! [ -z "$xdir" ]; then
     xdir="\( $xdir \) -a -type d -prune -o"
   fi
-  local files="find $location $xdir"
+  local files="find $location $xdir -type f"
   if ! [ -z "$ext_allowed" ]; then
     files="$files \( $ext_allowed \)"
     if ! [ -z "$forbidden" ]; then
