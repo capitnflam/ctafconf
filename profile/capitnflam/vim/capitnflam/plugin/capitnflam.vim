@@ -97,4 +97,5 @@ set listchars=tab:  ,trail:·,eol:¶
 
 else
 " Put vim only configuration here
+
 endif
