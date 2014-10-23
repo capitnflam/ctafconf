@@ -106,6 +106,8 @@ function findin
     echo '          Le motif "debug" ne matchera une ligne contenant "__debug__".'
     echo '-x    : Exclure de la recherche tous les dossiers dont les noms sont celui'
     echo '        spécifié.'
+    echo '-nc   : Ne pas utiliser de couleur pour la sortie.'
+    echo '-c    : Utiliser les couleurs pour la sortie. (default)'
   }
 
   function findin_display_usage_US()
@@ -134,6 +136,8 @@ function findin
     echo '          The pattern "debug" will not match a line containing "__debug__"'
     echo '-x    : Exclude from the search all the directories that the name matches'
     echo '        the given pattern.'
+    echo '-nc   : Don''t use colored output.'
+    echo '-c    : Use colored output. (default)'
   }
   function findin_display_usage_EN() { findin_display_usage_US "$@"; }
 
@@ -149,6 +153,7 @@ function findin
   local pattern_is_word=
   local only_list=0
   local open_results=0
+  local colors='--color=always'
   unset replace_pattern
   local grep_color=''
   while [ "$#" -ne 0 ]; do
@@ -193,6 +198,12 @@ function findin
       fi
       xdir="$xdir -name '$2'"
       shift 2
+    elif [ "$1" = '-nc' ]; then
+        colors='--color=never'
+        shift
+    elif [ "$1" = '-c' ]; then
+        colors='--color=always'
+        shift
     else # default is like "-e"
       pattern="$1"
       shift
@@ -245,7 +256,7 @@ function findin
   local len=
   function process_file()
   {
-    out=$(GREP_COLOR="$grep_color" grep $pattern_is_word $case_sensitive -n --color=always  --binary-files=without-match -e "$pattern" "$1")
+    out=$(GREP_COLOR="$grep_color" grep $pattern_is_word $case_sensitive -n ${colors}  --binary-files=without-match -e "$pattern" "$1")
 
     if [ "$?" -eq 0 ]; then
       results="$results'$1' "
