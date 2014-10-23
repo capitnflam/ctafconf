@@ -255,6 +255,10 @@ class GrkSetupEmacs:
 class GrkSetupScreen:
   FILES = [ (".screenrc"     , "etc/screen/screenrc") ]
 
+class GrkSetupTmux:
+  FILES = [ ( ".tmux.conf"   , "etc/tmux/tmux.conf") ]
+  USERS = [ ( ".tmux.conf.user", "tmux.conf.user"), ]
+
 class GrkSetupVim:
   FILES = [ (".vimrc"        ,    "etc/vim/vimrc"),
             (".gvimrc"       ,   "etc/vim/gvimrc") ]
@@ -308,6 +312,7 @@ PACKAGES = [ GrkSetupZsh,
              GrkSetupTop,
              GrkSetupEmacs,
              GrkSetupScreen,
+             GrkSetupTmux,
              GrkSetupVim,
              GrkSetupGnomeTerminal ]
 
