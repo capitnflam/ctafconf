@@ -34,12 +34,12 @@ function set_title() {
     }
     local title=''
 
-    if [ "$#" -ne 1 ]; then
+    if [ "$#" -lt 1 ]; then
         echo 'ERROR: title required'
         set_title_display_usage
         return 2
     fi
-    title=$1
+    title="$@"
     echo -ne '\e]2;'${title}'\007\e]1;\007'
 }
 alias my_set_title=set_title
