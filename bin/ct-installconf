@@ -59,8 +59,9 @@ def get_backup_filename(fname):
 def grk_copy_file(dest, src):
   LOGGER.debug("cp %s %s", src, dest)
   if not DRY_RUN:
-    if not os.path.exists(os.path.dirname(dest)):
-      os.makedirs(os.path.dirname(dest))
+    if not os.path.exists(os.path.dirname(src)):
+      print("creating directory: %s" % os.path.dirname(src))
+      os.makedirs(os.path.dirname(src))
     shutil.copyfile(dest, src)
   else:
     LOGGER.debug("dryrun: cp %s %s", src, dest)
@@ -268,7 +269,7 @@ class GrkSetupXresources:
   def install(self):
     """Call xrdb to load the config in the database """
     try:
-      subprocess.call(["xrdb", "-merge", "~/.Xresources"])
+      subprocess.call(["xrdb", "-merge", DEST_DIR + "/.Xresources"])
     except CalledProcessError:
       pass
     except OSError:
