@@ -59,6 +59,8 @@ def get_backup_filename(fname):
 def grk_copy_file(dest, src):
   LOGGER.debug("cp %s %s", src, dest)
   if not DRY_RUN:
+    if not os.path.exists(os.path.dirname(dest)):
+      os.makedirs(os.path.dirname(dest))
     shutil.copyfile(dest, src)
   else:
     LOGGER.debug("dryrun: cp %s %s", src, dest)
@@ -329,8 +331,8 @@ PACKAGES = [ GrkSetupZsh,
              GrkSetupEmacs,
              GrkSetupScreen,
              GrkSetupTmux,
-             GrkSetupXresources,
              GrkSetupXterm,
+             GrkSetupXresources,
              GrkSetupVim,
              GrkSetupGnomeTerminal ]
 
