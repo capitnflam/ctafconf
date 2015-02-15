@@ -1,0 +1,3 @@
+#include ".Xresources.d/xterm"
+
+#include ".Xresources.user"

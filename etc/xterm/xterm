@@ -1,0 +1,4 @@
+Xterm*saveLines: 4096
+XTerm*metaSendsEscape: true
+XTerm*locale: true
+XTerm*reverseVideo: on

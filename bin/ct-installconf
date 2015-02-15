@@ -31,6 +31,7 @@ import os
 import shutil
 #import difflib
 import filecmp
+import subprocess
 
 
 logging.basicConfig(level=logging.WARNING)
@@ -259,6 +260,21 @@ class GrkSetupTmux:
   FILES = [ ( ".tmux.conf"   , "etc/tmux/tmux.conf") ]
   USERS = [ ( ".tmux.conf.user", "tmux.conf.user"), ]
 
+class GrkSetupXresources:
+  FILES = [ ( ".Xresources"  , "etc/xresources/Xresources" ) ]
+  USERS = [ ( ".Xresources.user", "Xresources.user" ) ]
+  def install(self):
+    """Call xrdb to load the config in the database """
+    try:
+      subprocess.call(["xrdb", "-merge", "~/.Xresources"])
+    except CalledProcessError:
+      pass
+    except OSError:
+      pass
+
+class GrkSetupXterm:
+  FILES = [ ( ".Xresources.d/xterm", "etc/xterm/xterm" ) ]
+
 class GrkSetupVim:
   FILES = [ (".vimrc"        ,    "etc/vim/vimrc"),
             (".gvimrc"       ,   "etc/vim/gvimrc") ]
@@ -313,6 +329,8 @@ PACKAGES = [ GrkSetupZsh,
              GrkSetupEmacs,
              GrkSetupScreen,
              GrkSetupTmux,
+             GrkSetupXresources,
+             GrkSetupXterm,
              GrkSetupVim,
              GrkSetupGnomeTerminal ]
 
