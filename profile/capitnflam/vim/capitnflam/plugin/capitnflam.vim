@@ -86,6 +86,9 @@ map <F7> mzgg=G`z<CR>
 " Toggling Gundo window
 nnoremap <F5> :GundoToggle<CR>
 
+" git time lapse view
+map <leader>gt :call TimeLapse()<CR>
+
 if has("gui_running")
 " Put gvim only configuration here
 " Disable visual bell
