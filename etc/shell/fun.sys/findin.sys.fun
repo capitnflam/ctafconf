@@ -265,7 +265,7 @@ function findin
       else
 	len=$(($COLUMNS - ${#1} - 2))
 	echo "$color$(substr padding 0 $(($len/2))) $1 $(substr padding 0 $(($len-$len/2)))$normal"
-	echo "$out"
+	echo -E "$out"
       fi
       if [ "$replace_pattern" = "${replace_pattern-no_set}" ]; then
 	echo sed -i -e "s/$sed_pattern/$replace_pattern/g$sed_i" "$1"
