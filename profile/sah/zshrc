@@ -3,4 +3,5 @@ alias gvimt="gvim --servername TR069 --remote "
 
 export PATH="$PATH:/opt/bouml32"
 export PATH="$PATH:/opt/modelio"
+export PATH="$PATH:/opt/yed"
 
