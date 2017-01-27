@@ -7,3 +7,6 @@
 [submodule "profile/capitnflam/vim/gundo"]
 	path = profile/capitnflam/vim/gundo
 	url = http://github.com/sjl/gundo.vim.git
+[submodule "etc/vim/bundle/vim-latex"]
+	path = etc/vim/bundle/vim-latex
+	url = git@github.com:vim-latex/vim-latex.git
