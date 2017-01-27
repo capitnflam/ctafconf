@@ -89,6 +89,12 @@ nnoremap <F5> :GundoToggle<CR>
 " git time lapse view
 map <leader>gt :call TimeLapse()<CR>
 
+" Set *.md files to be opened as markdown files
+autocmd BufNewFile,BufReadPost *.md set filetype=markdown
+
+" disable folding
+set nofoldenable
+
 if has("gui_running")
 " Put gvim only configuration here
 " Disable visual bell
