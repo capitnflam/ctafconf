@@ -270,7 +270,7 @@ class GrkSetupXresources:
     """Call xrdb to load the config in the database """
     try:
       subprocess.call(["xrdb", "-merge", DEST_DIR + "/.Xresources"])
-    except CalledProcessError:
+    except subprocess.CalledProcessError:
       pass
     except OSError:
       pass
