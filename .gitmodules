@@ -10,3 +10,6 @@
 [submodule "etc/vim/bundle/vim-latex"]
 	path = etc/vim/bundle/vim-latex
 	url = git@github.com:vim-latex/vim-latex.git
+[submodule "etc/vim/bundle/vim-ft-bzl"]
+	path = etc/vim/bundle/vim-ft-bzl
+	url = git@github.com:bazelbuild/vim-ft-bzl.git
