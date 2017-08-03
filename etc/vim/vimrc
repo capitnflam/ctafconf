@@ -106,6 +106,9 @@ call ctafconf#load_profiles()
 syntax on
 filetype plugin on
 
+" Set the executable and options for plantuml
+let g:plantuml_executable_script='plantuml -tsvg'
+
 
 " Last, load ~/.vimrc.user
 if has("unix")
