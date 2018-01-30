@@ -32,6 +32,7 @@ import shutil
 #import difflib
 import filecmp
 import subprocess
+import platform
 
 
 logging.basicConfig(level=logging.WARNING)
@@ -370,6 +371,9 @@ def prepare_tree():
   symlink_folder("profile")
 
 if __name__ == "__main__":
+  if "Darwin" in platform.platform():
+    PACKAGES.remove(GrkSetupXterm)
+    PACKAGES.remove(GrkSetupXresources)
   if "--without-vim" in sys.argv:
     PACKAGES.remove(GrkSetupVim)
   if "--dry-run" in sys.argv:
