@@ -16,3 +16,12 @@
 [submodule "etc/vim/bundle/plantuml-syntax"]
 	path = etc/vim/bundle/plantuml-syntax
 	url = git@github.com:aklt/plantuml-syntax.git
+[submodule "etc/vim/bundle/syntastic"]
+	path = etc/vim/bundle/syntastic
+	url = https://github.com/vim-syntastic/syntastic.git
+[submodule "etc/vim/bundle/rust.vim"]
+	path = etc/vim/bundle/rust.vim
+	url = https://github.com/rust-lang/rust.vim.git
+[submodule "etc/vim/bundle/rustpeg.vim"]
+	path = etc/vim/bundle/rustpeg.vim
+	url = https://github.com/treycordova/rustpeg.vim.git
