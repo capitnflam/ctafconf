@@ -66,6 +66,7 @@ bindkey -M menuselect "^Z" undo
 bindkey -M menuselect "^c" undo
 
 
+zle -N menu-expand-or-interactive
 bindkey -M menuselect "^I" menu-expand-or-interactive
 
 
