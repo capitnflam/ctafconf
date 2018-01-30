@@ -374,6 +374,7 @@ if __name__ == "__main__":
   if "Darwin" in platform.platform():
     PACKAGES.remove(GrkSetupXterm)
     PACKAGES.remove(GrkSetupXresources)
+    PACKAGES.remove(GrkSetupGnomeTerminal)
   if "--without-vim" in sys.argv:
     PACKAGES.remove(GrkSetupVim)
   if "--dry-run" in sys.argv:
