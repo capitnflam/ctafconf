@@ -17,7 +17,7 @@ After calling ct-installconf, edit user-profile.sh to change your settings.
 Prefered way to install, from GIT:
 > mkdir .config
 > cd .config
-> git clone git://github.com/ctaf42/ctafconf.git
+> git clone --recursive git://github.com/ctaf42/ctafconf.git
 > cd ctafconf/bin
 > ./ct-installconf
 > nano ~/.config/ctafconf/user-profile.sh
