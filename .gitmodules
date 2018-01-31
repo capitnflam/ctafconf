@@ -25,3 +25,6 @@
 [submodule "etc/vim/bundle/rustpeg.vim"]
 	path = etc/vim/bundle/rustpeg.vim
 	url = https://github.com/treycordova/rustpeg.vim.git
+[submodule "etc/vim/bundle/vim-racer"]
+	path = etc/vim/bundle/vim-racer
+	url = https://github.com/racer-rust/vim-racer.git

@@ -95,6 +95,13 @@ autocmd BufNewFile,BufReadPost *.md set filetype=markdown
 " disable folding
 set nofoldenable
 
+set hidden
+"let g:racer_cmd = "/path/to/racer/bin"
+au FileType rust nmap gd <Plug>(rust-def)
+au FileType rust nmap gs <Plug>(rust-def-split)
+au FileType rust nmap gx <Plug>(rust-def-vertical)
+au FileType rust nmap <leader>gd <Plug>(rust-doc)
+
 if has("gui_running")
 " Put gvim only configuration here
 " Disable visual bell
