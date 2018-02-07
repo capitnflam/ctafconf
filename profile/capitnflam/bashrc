@@ -1,6 +1,6 @@
 alias lr='ll -R'
 alias lra='la -R'
-alias ss='~/.bin/session_search.sh '
+#alias ss='~/.bin/session_search.sh '
 alias ff='~/.bin/find_func.sh '
 alias gg='egrep -R -I -n --color=auto * -e '
 alias aa='~/.bin/around.sh '
