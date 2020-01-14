@@ -46,7 +46,9 @@ for p in ${=ctafconf_profiles}; do
     fi
 done
 
-rust_sysroot=$(rustc --print sysroot)
-if [ x"$?" = "x0" ]; then
-    export RUST_SRC_PATH=${rust_sysroot}/lib/rustlib/src/rust/src/
+if command -v rustc >/dev/null 2>&1; then
+    rust_sysroot=$(rustc --print sysroot)
+    if [ x"$?" = "x0" ]; then
+        export RUST_SRC_PATH=${rust_sysroot}/lib/rustlib/src/rust/src/
+    fi
 fi
