@@ -1,30 +1,18 @@
 [submodule "profile/capitnflam/zsh/zsh-syntax-highlighting"]
 	path = profile/capitnflam/zsh/zsh-syntax-highlighting
-	url = git://github.com/zsh-users/zsh-syntax-highlighting.git
+	url = https://github.com/zsh-users/zsh-syntax-highlighting.git
 [submodule "profile/capitnflam/vim/editorconfig"]
 	path = profile/capitnflam/vim/editorconfig
-	url = git://github.com/editorconfig/editorconfig-vim.git
+	url = https://github.com/editorconfig/editorconfig-vim.git
 [submodule "profile/capitnflam/vim/gundo"]
 	path = profile/capitnflam/vim/gundo
-	url = http://github.com/sjl/gundo.vim.git
+	url = https://github.com/sjl/gundo.vim.git
 [submodule "etc/vim/bundle/vim-latex"]
 	path = etc/vim/bundle/vim-latex
-	url = git@github.com:vim-latex/vim-latex.git
-[submodule "etc/vim/bundle/vim-ft-bzl"]
-	path = etc/vim/bundle/vim-ft-bzl
-	url = git@github.com:bazelbuild/vim-ft-bzl.git
+	url = https://github.com/vim-latex/vim-latex.git
 [submodule "etc/vim/bundle/plantuml-syntax"]
 	path = etc/vim/bundle/plantuml-syntax
-	url = git@github.com:aklt/plantuml-syntax.git
+	url = https://github.com/aklt/plantuml-syntax.git
 [submodule "etc/vim/bundle/syntastic"]
 	path = etc/vim/bundle/syntastic
 	url = https://github.com/vim-syntastic/syntastic.git
-[submodule "etc/vim/bundle/rust.vim"]
-	path = etc/vim/bundle/rust.vim
-	url = https://github.com/rust-lang/rust.vim.git
-[submodule "etc/vim/bundle/rustpeg.vim"]
-	path = etc/vim/bundle/rustpeg.vim
-	url = https://github.com/treycordova/rustpeg.vim.git
-[submodule "etc/vim/bundle/vim-racer"]
-	path = etc/vim/bundle/vim-racer
-	url = https://github.com/racer-rust/vim-racer.git
