@@ -1,19 +1,4 @@
 -*- mode:org; -*-
 
-* aldebaran:
-  Adebaran profile
-** rlist and rssh script
-* yannick:
-  This is the perfect vim'an profile
-** shell: vim is the default editor
-** zsh  : support ! in command
-* ctaf:
-  Nothing really interesting here at the moment
-** emacs: update copyright in headers
-** emacs: save script as executable
-* sah:
-  sah conf
-** emacs
-*** Default font: DejaVu Sans Mono 8pt
-*** Default indentation is space made
-*** Default indent size = 3
+* capitnflam:
+  A lot of stuff!

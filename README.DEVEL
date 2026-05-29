@@ -35,3 +35,12 @@ Global advise:
 - use ${varname} to access variable
 - $(( 077 )) = 63
 
+===========================================================
+TESTING:
+===========================================================
+A Dockerfile is present to spawn a testing cli environment.
+
+```
+docker build -t test-env .
+docker run -it --rm test-env zsh
+```
