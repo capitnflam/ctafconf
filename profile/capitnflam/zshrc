@@ -30,6 +30,8 @@ alias aa='~/.bin/around.sh '
 alias h='history'
 alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
 
+alias_set node_clean "find . -name 'node_modules' -type d -prune -exec rm -rf '{}' \+"
+
 export MINICOM="-c on -w"
 
 export PATH="$PATH:${HOME}/.bin/"
